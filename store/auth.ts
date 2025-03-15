@@ -49,7 +49,7 @@ export const useAuthStore: AuthStoreHook = (options = {}) => {
 	const sync = async () => {
 		try {
 			setIsLoading(true);
-			const res = await AuthApi.verify();
+			const res = await AuthApi.verifyUserIfLoggedIn();
 			store.setUser(res.data);
 			store.setIsLoggedIn(true);
 		} catch {
