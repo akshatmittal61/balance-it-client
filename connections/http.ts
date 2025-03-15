@@ -1,4 +1,4 @@
-import { apiMethods, backendBaseUrl, HTTP } from "@/constants";
+import { apiMethods, backendBaseUrl, HTTP, serverBaseUrl } from "@/constants";
 import { Logger } from "@/log";
 import { T_API_METHODS } from "@/types";
 import { sleep } from "@/utils";
@@ -65,6 +65,22 @@ class HttpWrapper {
 	): Promise<R> {
 		try {
 			let response!: R;
+			if (config) {
+				if (config.headers) {
+					config.headers["x-endpoint"] = url;
+				} else {
+					config.headers = {
+						"x-endpoint": url,
+					};
+				}
+			} else {
+				config = {
+					headers: {
+						"x-endpoint": url,
+					},
+				};
+			}
+			url = "";
 			if (method === apiMethods.GET) {
 				response = await this.http.get(url, config);
 			} else if (method === apiMethods.POST) {
@@ -111,3 +127,11 @@ export const http = new HttpWrapper(
 		timeout: 10000,
 	})
 );
+
+export const server = axios.create({
+	baseURL: serverBaseUrl + "/api/v1",
+	headers: {
+		"Content-Type": "application/json",
+	},
+	withCredentials: true,
+});
