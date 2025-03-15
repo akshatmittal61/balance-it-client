@@ -1,5 +1,8 @@
 import { Home } from "@/components";
+import { authRouterInterceptor } from "@/connections";
+import { routes } from "@/constants";
 import styles from "@/styles/pages/Home.module.scss";
+import { ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
 import React from "react";
 
@@ -14,3 +17,29 @@ const HomePage: React.FC = () => {
 };
 
 export default HomePage;
+
+export const getServerSideProps = (context: any): Promise<ServerSideResult> => {
+	return authRouterInterceptor(context, {
+		onLoggedInAndOnboarded() {
+			return {
+				redirect: {
+					destination: routes.HOME,
+					permanent: false,
+				},
+			};
+		},
+		onLoggedInAndNotOnboarded() {
+			return {
+				redirect: {
+					destination: routes.ONBOARDING,
+					permanent: false,
+				},
+			};
+		},
+		onLoggedOut() {
+			return {
+				props: {},
+			};
+		},
+	});
+};

@@ -1,7 +1,7 @@
 import { AuthApi } from "@/api";
 import { cache, getCacheKey } from "@/cache";
 import { cacheParameter } from "@/constants";
-import { ServerSideAuthInterceptor } from "@/types/server";
+import { ServerSideAuthInterceptor } from "@/types";
 
 export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 	context: any,
