@@ -28,6 +28,7 @@ export const Hero: React.FC<IHeroProps> = () => {
 				<div className={classes("-content")}>
 					<Typography
 						className={classes("-container__heading")}
+						family="alice"
 						size="head-1"
 						weight="bold"
 						as="h1"
