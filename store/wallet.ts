@@ -1,34 +1,26 @@
-import { AuthApi } from "@/api";
-import { IUser } from "@/types";
+import { WalletApi } from "@/api";
+import { Expense } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
 
 type State = {
-	user: IUser | null;
-	isLoggedIn: boolean;
+	expenses: Array<Expense>;
 };
 
 type Setter<T extends keyof State> = (_: State[T]) => void;
 
 type Action = {
-	setUser: Setter<"user">;
-	setIsLoggedIn: Setter<"isLoggedIn">;
+	setExpenses: Setter<"expenses">;
 };
 
 type Store = State & Action;
 
 const store = create<Store>((set, get) => {
 	return {
-		user: null,
-		isLoggedIn: false,
-		getUser: () => get().user,
-		getIsLoggedIn: () => get().isLoggedIn,
-		setUser: (user) => {
-			if (user) set({ user, isLoggedIn: true });
-			else set({ user, isLoggedIn: false });
-		},
-		setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
+		expenses: [],
+		getExpenses: () => get().expenses,
+		setExpenses: (expenses) => set({ expenses }),
 	};
 });
 
@@ -39,25 +31,23 @@ type Options = {
 };
 
 type ReturnType = Store & {
-	sync: () => void;
 	isLoading: boolean;
+	sync: () => void;
 };
 
-type AuthStoreHook = (_?: Options) => ReturnType;
+type WalletStoreHook = (_?: Options) => ReturnType;
 
-export const useAuthStore: AuthStoreHook = (options = {}) => {
+export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const store = useStore();
 	const [isLoading, setIsLoading] = useState(false);
 
 	const sync = async () => {
 		try {
 			setIsLoading(true);
-			const res = await AuthApi.verifyUserIfLoggedIn();
-			store.setUser(res.data);
-			store.setIsLoggedIn(true);
+			const res = await WalletApi.getUserExpenses();
+			store.setExpenses(res.data);
 		} catch {
-			store.setUser(null);
-			store.setIsLoggedIn(false);
+			store.setExpenses([]);
 		} finally {
 			setIsLoading(false);
 		}

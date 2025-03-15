@@ -1,5 +1,6 @@
 import { authRouterInterceptor } from "@/connections";
 import { routes } from "@/constants";
+import { useWalletStore } from "@/store";
 import { IUser, ServerSideResult } from "@/types";
 import React from "react";
 
@@ -8,10 +9,14 @@ type HomePageProps = {
 };
 
 const HomePage: React.FC<HomePageProps> = ({ user }) => {
+	const { expenses, isLoading } = useWalletStore({ syncOnMount: true });
 	return (
 		<main>
 			<span>Home</span>
 			<pre>{JSON.stringify(user, null, 2)}</pre>
+			<pre>
+				{JSON.stringify(isLoading ? "loading" : expenses, null, 2)}
+			</pre>
 		</main>
 	);
 };
