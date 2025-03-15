@@ -1,9 +1,10 @@
 {
-	"name": "next-ts-full-stack-template",
-	"version": "0.1.0",
+	"name": "balance-it",
+	"description": "Manage all your money in one place. Get summaries and reports to help you make better decisions.",
+	"version": "1.0.0",
 	"private": false,
 	"license": "MIT",
-	"repository": "https://github.com/akshatmittal61/next-ts-full-stack-template.git",
+	"repository": "https://github.com/akshatmittal61/balance-it-client.git",
 	"author": "Akshat Mittal <akshatmittal2506@gmail.com>",
 	"engines": {
 		"node": ">=18.0.0",
@@ -23,7 +24,6 @@
 	},
 	"dependencies": {
 		"axios": "^1.8.3",
-		"mongoose": "^8.9.6",
 		"next": "15.1.6",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
