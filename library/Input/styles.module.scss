@@ -65,12 +65,12 @@
 			border-bottom: 2px solid var(--transparent);
 		}
 
-		&:invalid {
+		&:invalid:not(:required) {
 			border-bottom: 2px solid var(--material-red);
 		}
 
 		&::placeholder {
-			color: var(--theme-light-grey);
+			color: var(--blue-grey-600);
 		}
 
 		&-container {

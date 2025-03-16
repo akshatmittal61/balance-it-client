@@ -1,0 +1,39 @@
+@import "@/styles/config/mixins";
+@import "@/styles/config/typography";
+
+.expense-wizard {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: flex-start;
+	flex-direction: column;
+	gap: 8px;
+
+	&-form {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+
+		& > div > div {
+			padding: 12px;
+		}
+	}
+
+	&-tags {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-start;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	&-tag {
+		border-radius: 500px;
+		border: 1px solid var(--theme-green);
+		padding: 8px 12px;
+		color: var(--theme-green);
+		@include typography(body, s, regular);
+	}
+}

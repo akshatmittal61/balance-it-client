@@ -4,3 +4,4 @@ export * from "./regex";
 export * from "./routes";
 export * from "./seo";
 export * from "./variables";
+export * from "./wallet";

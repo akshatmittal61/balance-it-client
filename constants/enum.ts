@@ -1,4 +1,4 @@
-import { T_API_METHODS, T_USER_ROLE } from "@/types";
+import { T_API_METHODS, T_EXPENSE_TYPE, T_USER_ROLE } from "@/types";
 import { getEnumeration } from "@/utils";
 
 export const USER_ROLE = getEnumeration<T_USER_ROLE>([
@@ -13,6 +13,13 @@ export const apiMethods = getEnumeration<T_API_METHODS>([
 	"PUT",
 	"PATCH",
 	"DELETE",
+]);
+
+export const EXPENSE_TYPE = getEnumeration<T_EXPENSE_TYPE>([
+	"PAID",
+	"RECEIVED",
+	"CASHBACK",
+	"SELF",
 ]);
 
 const message = Object.freeze({
