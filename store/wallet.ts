@@ -1,5 +1,6 @@
 import { WalletApi } from "@/api";
-import { Expense } from "@/types";
+import { Logger } from "@/log";
+import { CreateModel, Expense } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
@@ -33,6 +34,7 @@ type Options = {
 type ReturnType = Store & {
 	isLoading: boolean;
 	sync: () => void;
+	createExpense: (_: CreateModel<Expense>) => void;
 };
 
 type WalletStoreHook = (_?: Options) => ReturnType;
@@ -53,6 +55,18 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		}
 	};
 
+	const createExpense = async (expense: CreateModel<Expense>) => {
+		try {
+			setIsLoading(true);
+			const created = await WalletApi.createExpense(expense);
+			store.setExpenses([created.data, ...store.expenses]);
+		} catch (err) {
+			Logger.error(err);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	useEffect(() => {
 		if (options.syncOnMount) {
 			sync();
@@ -64,5 +78,6 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		...store,
 		isLoading,
 		sync,
+		createExpense,
 	};
 };
