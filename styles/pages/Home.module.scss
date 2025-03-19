@@ -2,11 +2,8 @@
 
 .home {
 	width: 100%;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	flex-direction: column;
 	position: relative;
+	margin-top: var(--head-height);
 
 	&-cta {
 		position: fixed;

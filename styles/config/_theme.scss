@@ -2,6 +2,7 @@
 :root::before,
 :root::after {
 	--transition-time: 0.3s;
+	--head-height: 2.5rem;
 
 	--font-poppins:
 		Poppins, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -22,4 +23,8 @@
 
 	--theme-bg: #fff;
 	--theme-fg: var(--accent-color);
+
+	--theme-back-shadow: rgba(0, 0, 0, 0.1);
+	--theme-back-shadow-light: rgba(0, 0, 0, 0.05);
+	--theme-back-shadow-dark: rgba(0, 0, 0, 0.4);
 }

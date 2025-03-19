@@ -1,9 +1,10 @@
-import { Toaster } from "react-hot-toast";
 import { AppSeo } from "@/constants";
-import React, { useEffect } from "react";
-import { Seo } from "./Seo";
-import { IUser } from "@/types";
 import { useAuthStore } from "@/store";
+import { IUser } from "@/types";
+import React, { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import { Header } from "./Header";
+import { Seo } from "./Seo";
 
 interface WrapperProps {
 	children: React.ReactNode;
@@ -31,6 +32,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 				twitter={AppSeo.twitter}
 				og={AppSeo.og}
 			/>
+			<Header />
 			{children}
 			<Toaster position="top-center" />
 		</>

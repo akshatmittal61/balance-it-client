@@ -19,7 +19,7 @@ const HomePage: React.FC<HomePageProps> = ({ user }) => {
 	const [openAddWizard, setOpenAddWizard] = useState(false);
 	return (
 		<>
-			<main>
+			<main className={classes("")}>
 				<span>Home</span>
 				<pre>{JSON.stringify(user, null, 2)}</pre>
 				<pre>

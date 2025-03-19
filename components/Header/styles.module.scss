@@ -1,0 +1,40 @@
+@import "@/styles/config/mixins";
+
+.header {
+	width: 100%;
+	height: var(--head-height);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: var(--theme-bg);
+	border-bottom: 1px solid var(--grey-100);
+	padding: 4px 12px;
+
+	&-home {
+		cursor: pointer;
+		height: 100%;
+
+		img {
+			object-fit: contain;
+			max-height: 100%;
+			width: auto;
+		}
+	}
+
+	&-user {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		gap: 12px;
+		border-radius: 4px;
+		cursor: pointer;
+		padding: 4px 8px;
+
+		&:hover {
+			background-color: var(--theme-back-shadow-light);
+		}
+	}
+}
