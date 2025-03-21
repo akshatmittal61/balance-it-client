@@ -104,7 +104,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							required
 						/>
 					</Responsive.Col>
-					<Responsive.Col xlg={33} lg={33} md={50} sm={100} xsm={100}>
+					<Responsive.Col xlg={33} lg={33} md={50} sm={50} xsm={50}>
 						<Input
 							name="type"
 							type="text"
@@ -130,7 +130,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							required
 						/>
 					</Responsive.Col>
-					<Responsive.Col xlg={33} lg={33} md={50} sm={100} xsm={100}>
+					<Responsive.Col xlg={33} lg={33} md={50} sm={50} xsm={50}>
 						<Input
 							name="method"
 							type="text"
@@ -167,7 +167,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							placeholder="Title e.g. Food, Travel, Grocery"
 							value={tagsStr}
 							onChange={(e: any) => setTagsStr(e.target.value)}
-							required
 						/>
 					</Responsive.Col>
 					<Responsive.Col

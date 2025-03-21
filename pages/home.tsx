@@ -1,12 +1,14 @@
-import { AddExpenseWizard } from "@/components";
+import { AddExpenseWizard, ExpenseRow } from "@/components";
+import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { routes } from "@/constants";
-import { Button } from "@/library";
+import { Button, MaterialIcon } from "@/library";
 import { useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
 import React, { useState } from "react";
+import { FiPlus } from "react-icons/fi";
 
 type HomePageProps = {
 	user: IUser;
@@ -14,23 +16,34 @@ type HomePageProps = {
 
 const classes = stylesConfig(styles, "home");
 
-const HomePage: React.FC<HomePageProps> = ({ user }) => {
+const HomePage: React.FC<HomePageProps> = () => {
 	const { expenses, isLoading } = useWalletStore({ syncOnMount: true });
 	const [openAddWizard, setOpenAddWizard] = useState(false);
 	return (
 		<>
 			<main className={classes("")}>
-				<span>Home</span>
-				<pre>{JSON.stringify(user, null, 2)}</pre>
-				<pre>
-					{JSON.stringify(isLoading ? "loading" : expenses, null, 2)}
-				</pre>
+				{isLoading ? (
+					<ExpenseTableSkeleton />
+				) : (
+					<>
+						{expenses.length > 0 ? (
+							expenses.map((e) => (
+								<ExpenseRow
+									key={`home-expense-${e.id}`}
+									expense={e}
+								/>
+							))
+						) : (
+							<></>
+						)}
+					</>
+				)}
 				<Button
 					className={classes("-cta")}
 					size="large"
 					onClick={() => setOpenAddWizard(true)}
 				>
-					Add Expense
+					<MaterialIcon icon="add" />
 				</Button>
 			</main>
 			{openAddWizard ? (

@@ -21,8 +21,8 @@
 
 	--accent-color: var(--theme-purple);
 
-	--theme-bg: #fff;
-	--theme-fg: var(--accent-color);
+	--theme-bg: var(--background);
+	--theme-fg: var(--foreground);
 
 	--theme-back-shadow: rgba(0, 0, 0, 0.1);
 	--theme-back-shadow-light: rgba(0, 0, 0, 0.05);

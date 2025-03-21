@@ -9,7 +9,7 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 ) => {
 	const { req } = context;
 	const cookies = req.cookies;
-	if (!cookies.accessToken && !cookies.refreshToken) {
+	if (!cookies.accessToken || !cookies.refreshToken) {
 		return onLoggedOut();
 	}
 	try {

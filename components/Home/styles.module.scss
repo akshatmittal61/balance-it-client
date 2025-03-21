@@ -68,6 +68,11 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
+
+		@include responsive(phone) {
+			width: auto;
+			height: 10rem;
+		}
 	}
 
 	&-content {
@@ -77,6 +82,10 @@
 		flex-direction: column;
 		flex: 0 0 auto;
 		gap: 12px;
+
+		@include responsive(phone) {
+			align-items: center;
+		}
 	}
 
 	&-image {

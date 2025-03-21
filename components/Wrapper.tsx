@@ -1,6 +1,7 @@
-import { AppSeo } from "@/constants";
+import { AppSeo, routes } from "@/constants";
 import { useAuthStore } from "@/store";
 import { IUser } from "@/types";
+import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { Header } from "./Header";
@@ -12,7 +13,9 @@ interface WrapperProps {
 }
 
 export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
+	const router = useRouter();
 	const { setUser } = useAuthStore();
+	const showHeaderOn: Array<string> = [routes.HOME];
 	useEffect(() => {
 		if (user) {
 			setUser(user);
@@ -32,7 +35,7 @@ export const Wrapper: React.FC<WrapperProps> = ({ children, user }) => {
 				twitter={AppSeo.twitter}
 				og={AppSeo.og}
 			/>
-			<Header />
+			{showHeaderOn.includes(router.pathname) ? <Header /> : null}
 			{children}
 			<Toaster position="top-center" />
 		</>
