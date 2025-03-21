@@ -1,4 +1,9 @@
-import { AddExpenseWizard, ExpenseRow, Placeholder } from "@/components";
+import {
+	AddExpenseWizard,
+	ExpenseRow,
+	ExpensesSummaryWidget,
+	Placeholder,
+} from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { routes } from "@/constants";
@@ -16,28 +21,31 @@ type HomePageProps = {
 const classes = stylesConfig(styles, "home");
 
 const HomePage: React.FC<HomePageProps> = () => {
-	const { expenses, isLoading } = useWalletStore({ syncOnMount: true });
+	const { expenses, summary, isLoading } = useWalletStore({
+		syncOnMount: true,
+	});
 	const [openAddWizard, setOpenAddWizard] = useState(false);
 	return (
 		<>
 			<main className={classes("")}>
 				{isLoading ? (
 					<ExpenseTableSkeleton />
-				) : (
+				) : expenses.length > 0 ? (
 					<>
-						{expenses.length > 0 ? (
-							expenses.map((e) => (
+						<section className={classes("-expenses")}>
+							{expenses.map((e) => (
 								<ExpenseRow
 									key={`home-expense-${e.id}`}
 									expense={e}
 								/>
-							))
-						) : (
-							<Placeholder
-								action={() => setOpenAddWizard(true)}
-							/>
-						)}
+							))}
+						</section>
+						<section className={classes("-summary")}>
+							<ExpensesSummaryWidget summary={summary} />
+						</section>
 					</>
+				) : (
+					<Placeholder action={() => setOpenAddWizard(true)} />
 				)}
 				<Button
 					className={classes("-cta")}

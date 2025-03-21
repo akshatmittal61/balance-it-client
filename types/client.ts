@@ -6,3 +6,8 @@ export type IUser = Omit<User, "createdAt" | "updatedAt">;
 export type CreateExpense = Omit<CreateModel<Expense>, "author"> & {
 	author: string;
 };
+
+export type ExpensesSummary = {
+	paid: number;
+	received: number;
+};

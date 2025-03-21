@@ -1,11 +1,17 @@
 import { http } from "@/connections";
-import { ApiRes, CreateExpense, Expense } from "@/types";
+import { ApiRes, CreateExpense, Expense, ExpensesSummary } from "@/types";
 
 export class WalletApi {
 	public static async getUserExpenses(
 		headers?: any
 	): Promise<ApiRes<Array<Expense>>> {
 		const res = await http.get("/wallet/expenses", { headers });
+		return res.data;
+	}
+	public static async getExpensesSummary(
+		headers?: any
+	): Promise<ApiRes<ExpensesSummary>> {
+		const res = await http.get("/wallet/expenses/summary", { headers });
 		return res.data;
 	}
 	public static async createExpense(

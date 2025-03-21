@@ -1,18 +1,21 @@
 import { WalletApi } from "@/api";
+import { initialExpensesSummary } from "@/constants";
 import { Logger } from "@/log";
-import { CreateExpense, Expense } from "@/types";
+import { CreateExpense, Expense, ExpensesSummary } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
 
 type State = {
 	expenses: Array<Expense>;
+	summary: ExpensesSummary;
 };
 
 type Setter<T extends keyof State> = (_: State[T]) => void;
 
 type Action = {
 	setExpenses: Setter<"expenses">;
+	setSummary: Setter<"summary">;
 };
 
 type Store = State & Action;
@@ -20,8 +23,11 @@ type Store = State & Action;
 const store = create<Store>((set, get) => {
 	return {
 		expenses: [],
+		summary: initialExpensesSummary,
 		getExpenses: () => get().expenses,
+		getSummary: () => get().summary,
 		setExpenses: (expenses) => set({ expenses }),
+		setSummary: (summary) => set({ summary }),
 	};
 });
 
@@ -48,10 +54,15 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const sync = async () => {
 		try {
 			setIsLoading(true);
-			const res = await WalletApi.getUserExpenses();
-			store.setExpenses(res.data);
+			const [expenses, summary] = await Promise.all([
+				WalletApi.getUserExpenses(),
+				WalletApi.getExpensesSummary(),
+			]);
+			store.setExpenses(expenses.data);
+			store.setSummary(summary.data);
 		} catch {
 			store.setExpenses([]);
+			store.setSummary(initialExpensesSummary);
 		} finally {
 			setIsLoading(false);
 		}

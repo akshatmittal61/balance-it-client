@@ -94,6 +94,48 @@
 	}
 }
 
+.expenses-summary {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+	gap: 8px;
+	border: 1px solid var(--grey-200);
+	border-radius: 8px;
+	padding: 6px 0;
+
+	&-heading {
+		width: 100%;
+		text-align: left;
+		padding: 6px 16px;
+	}
+
+	&-row {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 6px 16px;
+	}
+
+	&-divider {
+		width: 100%;
+		height: 1px;
+		background: var(--grey-200);
+	}
+
+	&-value {
+		&--paid {
+			color: var(--material-red);
+		}
+
+		&--received {
+			color: var(--material-green);
+		}
+	}
+}
+
 .placeholder {
 	display: flex;
 	justify-content: center;

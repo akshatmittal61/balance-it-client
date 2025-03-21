@@ -38,7 +38,9 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({ expense }) => {
 				<Typography size="s" className={classes("-date")}>
 					{dayjs(expense.timestamp).format("DD MMM - HH:mm")}
 				</Typography>
-				<div className={classes("-method")}>{expense.method}</div>
+				<Typography size="s" className={classes("-method")}>
+					{expense.method}
+				</Typography>
 			</div>
 		</div>
 	);
