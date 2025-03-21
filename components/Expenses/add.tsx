@@ -4,6 +4,7 @@ import { Button, Input, Pane } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { CreateExpense, T_EXPENSE_TYPE } from "@/types";
 import { enumToText, slugify, stylesConfig } from "@/utils";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import styles from "./styles.module.scss";
 
@@ -31,7 +32,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 		title: "",
 		amount: 0,
 		tags: [],
-		timestamp: new Date().getTime().toString(),
+		timestamp: new Date().toISOString(),
 		icon: "",
 		type: EXPENSE_TYPE.PAID,
 		method: "UPI",
@@ -43,7 +44,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 		if (name === "timestamp") {
 			setPayload((p) => ({
 				...p,
-				[name]: new Date(value).getTime().toString(),
+				[name]: new Date(value).toISOString(),
 			}));
 		} else if (name === "amount") {
 			setPayload((p) => ({
@@ -96,10 +97,9 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							type="datetime-local"
 							placeholder=""
 							label="Date / Time"
-							value={new Date(+payload.timestamp)
-								.toISOString()
-								.slice(0, 16)
-								.toString()}
+							value={dayjs(payload.timestamp).format(
+								"YYYY-MM-DDTHH:mm"
+							)}
 							onChange={handleChange}
 							required
 						/>
