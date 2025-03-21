@@ -7,11 +7,12 @@ import {
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { routes } from "@/constants";
-import { Button, MaterialIcon } from "@/library";
+import { Button, MaterialIcon, Typography } from "@/library";
 import { useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 
 type HomePageProps = {
@@ -41,6 +42,13 @@ const HomePage: React.FC<HomePageProps> = () => {
 							))}
 						</section>
 						<section className={classes("-summary")}>
+							<div className={classes("-current")}>
+								<Typography size="lg">
+									{dayjs().format(
+										"dddd, DD MMMM YYYY, h:mm A"
+									)}
+								</Typography>
+							</div>
 							<ExpensesSummaryWidget summary={summary} />
 						</section>
 					</>

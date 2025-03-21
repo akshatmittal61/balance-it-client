@@ -11,6 +11,11 @@
 	gap: 16px;
 	padding: 16px;
 
+	@include responsive(phone) {
+		padding: 0;
+		flex-direction: column-reverse;
+	}
+
 	&-expenses {
 		width: 70%;
 		display: flex;
@@ -19,13 +24,38 @@
 		flex-direction: column;
 		border: 1px solid var(--grey-200);
 		border-radius: 8px;
+
+		@include responsive(phone) {
+			width: 100%;
+			border: none;
+			border-radius: 24px 24px 0 0;
+			box-shadow: 0px -10px 15px -3px rgba(0, 0, 0, 0.1);
+		}
 	}
 
 	&-summary {
 		width: 30%;
 		display: flex;
-		justify-content: center;
-		align-items: flex-start;
+		justify-content: flex-start;
+		align-items: center;
+		flex-direction: column;
+		gap: 12px;
+
+		@include responsive(phone) {
+			width: 100%;
+		}
+	}
+
+	&-current {
+		width: 100%;
+		border: 1px solid var(--grey-200);
+		border-radius: 8px;
+		padding: 8px;
+		color: var(--grey-600);
+
+		@include responsive(phone) {
+			display: none;
+		}
 	}
 
 	&-cta {
