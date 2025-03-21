@@ -94,6 +94,22 @@
 	}
 }
 
+.placeholder {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	gap: 12px;
+	padding: 60px 0;
+	text-align: center;
+
+	img {
+		width: 200px;
+		height: auto;
+		object-fit: contain;
+	}
+}
+
 .expense-skeleton {
 	width: 100%;
 	display: flex;

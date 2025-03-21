@@ -1,4 +1,4 @@
-import { AddExpenseWizard, ExpenseRow } from "@/components";
+import { AddExpenseWizard, ExpenseRow, Placeholder } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { routes } from "@/constants";
@@ -8,7 +8,6 @@ import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
 import React, { useState } from "react";
-import { FiPlus } from "react-icons/fi";
 
 type HomePageProps = {
 	user: IUser;
@@ -34,7 +33,9 @@ const HomePage: React.FC<HomePageProps> = () => {
 								/>
 							))
 						) : (
-							<></>
+							<Placeholder
+								action={() => setOpenAddWizard(true)}
+							/>
 						)}
 					</>
 				)}
