@@ -43,7 +43,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 						</section>
 						<section className={classes("-summary")}>
 							<div className={classes("-current")}>
-								<Typography size="lg">
+								<Typography>
 									{dayjs().format(
 										"dddd, DD MMMM YYYY, h:mm A"
 									)}

@@ -50,7 +50,7 @@
 		width: 100%;
 		border: 1px solid var(--grey-200);
 		border-radius: 8px;
-		padding: 8px;
+		padding: 8px 16px;
 		color: var(--grey-600);
 
 		@include responsive(phone) {
