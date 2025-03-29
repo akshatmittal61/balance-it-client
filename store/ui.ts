@@ -52,6 +52,7 @@ const store = create<Store>((set, get) => {
 		setTheme: (theme) => {
 			set({ theme });
 			document.body.dataset.theme = theme;
+			localStorage.setItem("theme", theme);
 		},
 		setAccentColor: (accentColor) => set({ accentColor }),
 		setIsSidebarExpanded: (isSidebarExpanded) => set({ isSidebarExpanded }),

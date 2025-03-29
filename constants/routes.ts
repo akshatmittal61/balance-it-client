@@ -8,4 +8,7 @@ export const routes = Object.freeze({
 	CALENDAR: "/calendar",
 	LOGIN: "/login",
 	ONBOARDING: "/onboarding",
+	ERROR: "/500",
+	PROFILE: "/profile",
+	PRIVACY_POLICY: "/privacy-policy",
 });

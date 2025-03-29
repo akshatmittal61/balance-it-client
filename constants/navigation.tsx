@@ -9,7 +9,7 @@ export const sideBarLinks: Array<Navigation> = [
 	},
 	{
 		title: "My Summary",
-		icon: "summary",
+		icon: "box",
 		route: routes.SUMMARY,
 	},
 	{
