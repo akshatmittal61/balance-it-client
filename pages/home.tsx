@@ -4,6 +4,7 @@ import {
 	ExpensesSummaryWidget,
 	Placeholder,
 	Seo,
+	TopBar,
 } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
@@ -31,6 +32,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 	return (
 		<>
 			<Seo title={`${user?.name} - Home | ${AppSeo.title}`} />
+			<TopBar title="Home" />
 			<main className={classes("")}>
 				{isLoading ? (
 					<ExpenseTableSkeleton />

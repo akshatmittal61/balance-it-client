@@ -13,7 +13,7 @@ interface IHeaderProps {}
 
 const classes = stylesConfig(styles, "header");
 
-const Header: React.FC<IHeaderProps> = () => {
+export const Header: React.FC<IHeaderProps> = () => {
 	const router = useRouter();
 	const { isLoggedIn, user, sync: syncAuthState } = useAuthStore();
 	const {
@@ -126,5 +126,3 @@ const Header: React.FC<IHeaderProps> = () => {
 		</header>
 	);
 };
-
-export default Header;
