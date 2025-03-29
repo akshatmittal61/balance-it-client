@@ -3,12 +3,13 @@ import {
 	ExpenseRow,
 	ExpensesSummaryWidget,
 	Placeholder,
+	Seo,
 } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
-import { routes } from "@/constants";
+import { AppSeo, routes } from "@/constants";
 import { Button, MaterialIcon, Typography } from "@/library";
-import { useWalletStore } from "@/store";
+import { useAuthStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
@@ -25,9 +26,11 @@ const HomePage: React.FC<HomePageProps> = () => {
 	const { expenses, summary, isLoading } = useWalletStore({
 		syncOnMount: true,
 	});
+	const { user } = useAuthStore();
 	const [openAddWizard, setOpenAddWizard] = useState(false);
 	return (
 		<>
+			<Seo title={`${user?.name} - Home | ${AppSeo.title}`} />
 			<main className={classes("")}>
 				{isLoading ? (
 					<ExpenseTableSkeleton />

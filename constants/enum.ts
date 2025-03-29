@@ -1,4 +1,4 @@
-import { T_API_METHODS, T_EXPENSE_TYPE, T_USER_ROLE } from "@/types";
+import { AppTheme, T_API_METHODS, T_EXPENSE_TYPE, T_USER_ROLE } from "@/types";
 import { getEnumeration } from "@/utils";
 
 export const USER_ROLE = getEnumeration<T_USER_ROLE>([
@@ -21,6 +21,8 @@ export const EXPENSE_TYPE = getEnumeration<T_EXPENSE_TYPE>([
 	"CASHBACK",
 	"SELF",
 ]);
+
+export const appTheme = getEnumeration<AppTheme>(["light", "dark"]);
 
 const message = Object.freeze({
 	SUCCESS: "Success",
