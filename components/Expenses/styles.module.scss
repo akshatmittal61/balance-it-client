@@ -10,10 +10,15 @@
 	gap: 8px;
 
 	&-form {
-		width: 100%;
+		width: 60%;
 		display: flex;
 		justify-content: flex-start;
 		align-items: flex-start;
+		margin: 0 auto;
+
+		@include responsive(phone) {
+			width: 100%;
+		}
 
 		& > div > div {
 			padding: 12px;
@@ -66,6 +71,7 @@
 
 	&-action {
 		justify-content: center;
+		gap: 2rem;
 	}
 }
 
@@ -171,6 +177,77 @@
 
 		&--received {
 			color: var(--material-green);
+		}
+	}
+}
+
+.members {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+
+	&-header {
+		width: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 24px;
+
+		&-controls {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: 12px;
+
+			input {
+				min-width: 160px;
+			}
+		}
+	}
+
+	&-user {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 12px;
+
+		&__details {
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			flex-direction: column;
+			gap: 2px;
+		}
+
+		button {
+			margin-left: auto;
+		}
+	}
+
+	&-placeholder {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		gap: 12px;
+		padding: 60px 0;
+		text-align: center;
+
+		img {
+			width: 200px;
+			height: auto;
+			object-fit: contain;
+		}
+	}
+
+	&-bulk-editor {
+		width: 100%;
+
+		& > *,
+		textarea {
+			width: 100%;
 		}
 	}
 }
