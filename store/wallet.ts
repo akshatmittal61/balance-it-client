@@ -9,11 +9,16 @@ import { createSelectors } from "./utils";
 type State = {
 	expenses: Array<Expense>;
 	summary: ExpensesSummary;
+	tags: Array<string>;
 };
 
+type Getter<T extends keyof State> = () => State[T];
 type Setter<T extends keyof State> = (_: State[T]) => void;
 
 type Action = {
+	getExpenses: Getter<"expenses">;
+	getSummary: Getter<"summary">;
+	getTags: Getter<"tags">;
 	setExpenses: Setter<"expenses">;
 	setSummary: Setter<"summary">;
 };
@@ -24,9 +29,17 @@ const store = create<Store>((set, get) => {
 	return {
 		expenses: [],
 		summary: initialExpensesSummary,
+		tags: [],
 		getExpenses: () => get().expenses,
 		getSummary: () => get().summary,
-		setExpenses: (expenses) => set({ expenses }),
+		getTags: () => get().tags,
+		setExpenses: (expenses) => {
+			const allTags = expenses.reduce((acc, expense) => {
+				return [...acc, ...(expense.tags || [])];
+			}, [] as string[]);
+			const uniqueTags = Array.from(new Set(allTags));
+			set({ expenses, tags: uniqueTags.sort() });
+		},
 		setSummary: (summary) => set({ summary }),
 	};
 });

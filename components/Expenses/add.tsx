@@ -1,24 +1,51 @@
 import { EXPENSE_TYPE, expenseMethods } from "@/constants";
 import { Responsive } from "@/layouts";
-import { Button, Input, Pane } from "@/library";
+import { Button, CheckBox, Input, Pane } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { CreateExpense, T_EXPENSE_TYPE } from "@/types";
-import { enumToText, slugify, stylesConfig } from "@/utils";
+import { enumToText, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
+import Image from "next/image";
 import React, { useState } from "react";
+import { FiX } from "react-icons/fi";
 import styles from "./styles.module.scss";
 
 type AddExpenseWizardProps = {
 	onClose: () => void;
 };
 
+type TagProps = {
+	tag: string;
+	active?: boolean;
+	onClick?: () => void;
+	onRemove?: () => void;
+	className?: string;
+};
+
 const classes = stylesConfig(styles, "expense-wizard");
 
-const Tag: React.FC<{ tag: string }> = ({ tag }) => {
+const Tag: React.FC<TagProps> = ({
+	tag,
+	active = true,
+	onClick,
+	onRemove,
+	className = "",
+}) => {
 	return (
-		<div className={classes("-tag")}>
-			<span>{tag}</span>
-		</div>
+		<span
+			className={classes(
+				"-tag",
+				{
+					"-tag--active": active,
+					"-tag--interactive": onClick !== undefined,
+				},
+				className
+			)}
+			onClick={onClick}
+		>
+			{tag}
+			{onRemove ? <FiX onClick={onRemove} /> : null}
+		</span>
 	);
 };
 
@@ -26,7 +53,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 	onClose,
 }) => {
 	const { user } = useAuthStore();
-	const { isAdding, createExpense } = useWalletStore();
+	const { isAdding, createExpense, tags } = useWalletStore();
 	const [tagsStr, setTagsStr] = useState("");
 	const [payload, setPayload] = useState<CreateExpense>({
 		title: "",
@@ -73,7 +100,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 						<Input
 							name="title"
 							type="text"
-							label="ExpenseTitle"
+							label="Title"
 							placeholder="Title e.g. Food"
 							value={payload.title}
 							onChange={handleChange}
@@ -91,7 +118,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							required
 						/>
 					</Responsive.Col>
-					<Responsive.Col xlg={33} lg={33} md={50} sm={100} xsm={100}>
+					<Responsive.Col xlg={33} lg={33} md={50} sm={50} xsm={50}>
 						<Input
 							name="timestamp"
 							type="datetime-local"
@@ -130,28 +157,35 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							required
 						/>
 					</Responsive.Col>
-					<Responsive.Col xlg={33} lg={33} md={50} sm={50} xsm={50}>
-						<Input
-							name="method"
-							type="text"
-							placeholder="Method e.g. Cash"
-							label="Method"
-							value={payload.method}
-							dropdown={{
-								enabled: true,
-								options: expenseMethods.map((m) => ({
-									id: slugify(m),
-									value: m,
-									label: m,
-								})),
-								onSelect: (option) => {
+					<Responsive.Col
+						xlg={100}
+						lg={100}
+						md={100}
+						sm={100}
+						xsm={100}
+						className={classes("-methods")}
+					>
+						{Object.values(expenseMethods).map((method) => (
+							<CheckBox
+								key={`add-expense-payment-method-${method.id}`}
+								label={
+									<Image
+										src={method.logo}
+										alt={method.label}
+										width={50}
+										height={50}
+										className={classes("-methods-logo")}
+									/>
+								}
+								checked={payload.method === method.id}
+								onChange={() => {
 									setPayload((p) => ({
 										...p,
-										method: option.value,
+										method: method.id,
 									}));
-								},
-							}}
-						/>
+								}}
+							/>
+						))}
 					</Responsive.Col>
 					<Responsive.Col
 						xlg={100}
@@ -175,19 +209,30 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 						md={100}
 						sm={100}
 						xsm={100}
+						className={classes("-tags")}
 					>
-						<div className={classes("-tags")}>
-							{tagsStr
-								.split(",")
-								.map((tag: string) => tag.trim())
-								.filter(Boolean)
-								.map((tag: string, index: number) => (
-									<Tag
-										tag={tag}
-										key={`add-expense-tag-${index}`}
-									/>
-								))}
-						</div>
+						{tagsStr
+							.split(",")
+							.map((tag: string) => tag.trim())
+							.filter(Boolean)
+							.map((tag: string, index: number) => (
+								<Tag
+									tag={tag}
+									active={true}
+									key={`add-expense-tag-${index}`}
+									onRemove={() => {
+										const currentTags = tagsStr
+											.split(",")
+											.map((tag) => tag.trim())
+											.filter(Boolean);
+										setTagsStr(
+											currentTags
+												.filter((t) => t !== tag)
+												.join(", ")
+										);
+									}}
+								/>
+							))}
 					</Responsive.Col>
 					<Responsive.Col
 						xlg={100}
@@ -195,6 +240,43 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 						md={100}
 						sm={100}
 						xsm={100}
+						className={classes("-tags")}
+					>
+						{tags
+							.map((tag: string) => tag.trim())
+							.filter(Boolean)
+							.filter(
+								(tag: string) =>
+									!tagsStr
+										.split(",")
+										.map((tag) => tag.trim())
+										.includes(tag)
+							)
+							.map((tag: string, index: number) => (
+								<Tag
+									tag={tag}
+									active={false}
+									key={`add-expense-tag-${index}`}
+									onClick={() => {
+										const currentTags = tagsStr
+											.split(",")
+											.map((tag) => tag.trim())
+											.filter(Boolean);
+										if (currentTags.includes(tag)) return;
+										setTagsStr(
+											[...currentTags, tag].join(", ")
+										);
+									}}
+								/>
+							))}
+					</Responsive.Col>
+					<Responsive.Col
+						xlg={100}
+						lg={100}
+						md={100}
+						sm={100}
+						xsm={100}
+						className={classes("-action")}
 					>
 						<Button size="large" loading={isAdding}>
 							Add

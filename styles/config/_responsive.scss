@@ -13,8 +13,6 @@
 
 [class^="col"] {
 	display: flex;
-	justify-content: center;
-	align-items: center;
 }
 
 @include responsive(extra-large-desktop) {

@@ -20,6 +20,18 @@
 		}
 	}
 
+	&-methods {
+		justify-content: space-between;
+		gap: 1rem;
+		margin: 2rem 0;
+
+		&-logo {
+			width: auto;
+			height: 1.75rem;
+			object-fit: contain;
+		}
+	}
+
 	&-tags {
 		width: 100%;
 		display: flex;
@@ -30,11 +42,30 @@
 	}
 
 	&-tag {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: row;
+		gap: 8px;
+		width: auto;
 		border-radius: 500px;
-		border: 1px solid var(--theme-green);
-		padding: 8px 12px;
-		color: var(--theme-green);
-		@include typography(body, s, regular);
+		border: 1px solid var(--theme-purple);
+		padding: 6px 12px;
+		color: var(--theme-purple);
+		@include typography(body, sm, regular);
+
+		&--interactive {
+			cursor: pointer;
+		}
+
+		&--active {
+			background-color: var(--theme-purple);
+			color: var(--white);
+		}
+	}
+
+	&-action {
+		justify-content: center;
 	}
 }
 
@@ -145,6 +176,7 @@
 }
 
 .placeholder {
+	width: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
