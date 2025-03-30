@@ -14,17 +14,19 @@ const classes = stylesConfig(styles, "expense-row");
 
 export const ExpenseRow: React.FC<ExpenseRowProps> = ({ expense }) => {
 	return (
-		<div className={classes("")}>
-			<div className={classes("-top")}>
-				<Typography
-					size="lg"
-					weight="medium"
-					className={classes("-title")}
-				>
+		<>
+			<div
+				className={classes("")}
+				// onClick={() => setOpenViewExpensePopup(true)}
+			>
+				<Typography className={classes("-date")}>
+					{dayjs(expense.timestamp).format("MMM DD, HH:mm")}
+				</Typography>
+				<Typography className={classes("-title")}>
 					{expense.title}
 				</Typography>
 				<Typography
-					size="xl"
+					weight="medium"
 					className={classes("-amount", {
 						"-amount--paid": expense.type === EXPENSE_TYPE.PAID,
 						"-amount--received":
@@ -34,14 +36,6 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({ expense }) => {
 					{expense.amount}
 				</Typography>
 			</div>
-			<div className={classes("-bottom")}>
-				<Typography size="s" className={classes("-date")}>
-					{dayjs(expense.timestamp).format("DD MMM - HH:mm")}
-				</Typography>
-				<Typography size="s" className={classes("-method")}>
-					{expense.method}
-				</Typography>
-			</div>
-		</div>
+		</>
 	);
 };

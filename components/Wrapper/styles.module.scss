@@ -17,13 +17,5 @@
 		width: 100%;
 		height: calc(100vh - var(--head-height));
 		border-radius: 0;
-
-		@include _theme(light) {
-			background-color: var(--accent-color-200);
-		}
-
-		@include _theme(dark) {
-			background-color: var(--bgcolor-400);
-		}
 	}
 }

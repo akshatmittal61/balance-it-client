@@ -1,3 +1,5 @@
+@import "./mixins";
+
 .gsi-material-button {
 	-moz-user-select: none;
 	-webkit-user-select: none;
@@ -132,4 +134,8 @@
 		"wght" 400,
 		"GRAD" 0,
 		"opsz" 24;
+
+	@include responsive(phone) {
+		font-size: 1.25rem;
+	}
 }

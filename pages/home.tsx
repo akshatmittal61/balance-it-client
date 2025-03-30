@@ -1,20 +1,12 @@
-import {
-	AddExpenseWizard,
-	ExpenseRow,
-	ExpensesSummaryWidget,
-	Placeholder,
-	Seo,
-	TopBar,
-} from "@/components";
+import { AddExpenseWizard, Home, Placeholder, Seo, TopBar } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { Button, MaterialIcon, Typography } from "@/library";
+import { Button, MaterialIcon } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
-import dayjs from "dayjs";
 import React, { useState } from "react";
 
 type HomePageProps = {
@@ -24,7 +16,7 @@ type HomePageProps = {
 const classes = stylesConfig(styles, "home");
 
 const HomePage: React.FC<HomePageProps> = () => {
-	const { expenses, summary, isLoading } = useWalletStore({
+	const { expenses, isLoading } = useWalletStore({
 		syncOnMount: true,
 	});
 	const { user } = useAuthStore();
@@ -38,7 +30,8 @@ const HomePage: React.FC<HomePageProps> = () => {
 					<ExpenseTableSkeleton />
 				) : expenses.length > 0 ? (
 					<>
-						<section className={classes("-expenses")}>
+						<Home.Body />
+						{/* <section className={classes("-expenses")}>
 							{expenses.map((e) => (
 								<ExpenseRow
 									key={`home-expense-${e.id}`}
@@ -55,7 +48,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 								</Typography>
 							</div>
 							<ExpensesSummaryWidget summary={summary} />
-						</section>
+						</section> */}
 					</>
 				) : (
 					<Placeholder action={() => setOpenAddWizard(true)} />
