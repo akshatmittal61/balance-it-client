@@ -17,9 +17,11 @@ export const Pane: React.FC<PaneProps> = ({
 	secondaryAction,
 	showHeader = true,
 	width = "60%",
+	height = "80vh",
 	style,
 	styles,
 	loading = false,
+	direction = "left",
 	className,
 	...props
 }) => {
@@ -46,9 +48,17 @@ export const Pane: React.FC<PaneProps> = ({
 					}) + ` ${className}`
 				}
 				style={{
-					width: `min(95vw, ${width})`,
+					width:
+						direction === "left" || direction === "right"
+							? `min(95vw, ${width})`
+							: "100%",
+					height:
+						direction === "left" || direction === "right"
+							? "100vh"
+							: `min(95vh, ${height})`,
 					...style,
 				}}
+				data-direction={direction}
 				ref={paneRef}
 				tabIndex={-1}
 				onKeyDown={(e) => {

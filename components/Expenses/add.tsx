@@ -93,7 +93,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 		});
 	};
 	return (
-		<Pane title="Add Expense" onClose={onClose}>
+		<Pane title="Add Expense" onClose={onClose} direction="bottom">
 			<form onSubmit={handleSubmit} className={classes("-form")}>
 				<Responsive.Row>
 					<Responsive.Col xlg={50} lg={50} md={50} sm={100} xsm={100}>

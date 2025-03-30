@@ -10,8 +10,10 @@ export interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
 	secondaryAction?: any;
 	showHeader?: boolean;
 	width?: number | string;
+	height?: number | string;
 	style?: React.CSSProperties;
 	loading?: boolean;
+	direction?: "left" | "right" | "top" | "bottom";
 	styles?: {
 		header?: React.CSSProperties;
 		body?: React.CSSProperties;
