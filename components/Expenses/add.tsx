@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FiChevronLeft, FiUsers, FiX } from "react-icons/fi";
-import { MembersWindow } from "./members";
+import { MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddExpenseScreen, AddExpenseWizardProps, TagProps } from "./types";
 
