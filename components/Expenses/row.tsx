@@ -188,6 +188,11 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 				</div>
 				{expanded ? (
 					<div className={classes("-info")}>
+						{expense.description ? (
+							<Typography as="p">
+								{expense.description}
+							</Typography>
+						) : null}
 						<div className={classes("-transfer")}>
 							<Pill
 								icon={expenseTypes[expense.type].icon}

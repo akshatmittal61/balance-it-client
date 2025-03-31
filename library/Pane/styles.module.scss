@@ -1,4 +1,5 @@
 @import "@/styles/config/mixins";
+@import "@/styles/config/shadows";
 
 .modal-pane {
 	position: fixed;
@@ -6,12 +7,8 @@
 	min-width: min(95vw, 400px);
 	background-color: var(--theme-bg);
 	overflow-y: auto;
-	box-shadow: var(--shadow-elevation-4dp);
+	@include shadow(4);
 	@include hide-scrollbar();
-
-	@include _theme(dark) {
-		box-shadow: var(--shadow-elevation-4dp-dark);
-	}
 
 	&[data-direction="left"] {
 		top: 0;

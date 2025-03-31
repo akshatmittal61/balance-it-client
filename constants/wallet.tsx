@@ -46,19 +46,34 @@ export const expenseTypes: Record<
 	PAID: {
 		id: "PAID",
 		label: "Paid",
-		icon: <MaterialIcon icon="upload" color="var(--material-red)" />,
+		icon: (
+			<MaterialIcon
+				icon="upload"
+				style={{ color: "var(--material-red)" }}
+			/>
+		),
 		theme: "error",
 	},
 	RECEIVED: {
 		id: "RECEIVED",
 		label: "Received",
-		icon: <MaterialIcon icon="download" color="var(--material-green)" />,
+		icon: (
+			<MaterialIcon
+				icon="download"
+				style={{ color: "var(--material-green)" }}
+			/>
+		),
 		theme: "success",
 	},
 	SELF: {
 		id: "SELF",
 		label: "Self",
-		icon: <MaterialIcon icon="laps" color="var(--material-blue)" />,
+		icon: (
+			<MaterialIcon
+				icon="laps"
+				style={{ color: "var(--material-blue)" }}
+			/>
+		),
 		theme: "info",
 	},
 };

@@ -19,12 +19,6 @@ export interface IButtonProps
 	iconPosition?: "left" | "right";
 }
 
-/* export type IconButtonProps = Omit<
-	IButtonProps,
-	"children" | "iconPosition" | "loading" | "theme" | "variant"
->;
- */
-
 export type IconButtonProps = React.DetailedHTMLProps<
 	React.ButtonHTMLAttributes<HTMLButtonElement>,
 	HTMLButtonElement
@@ -32,4 +26,22 @@ export type IconButtonProps = React.DetailedHTMLProps<
 	className?: string;
 	size?: ButtonSize;
 	icon: React.ReactNode;
+};
+
+export type FabButtonProps = React.DetailedHTMLProps<
+	React.ButtonHTMLAttributes<HTMLButtonElement>,
+	HTMLButtonElement
+> & {
+	className?: string;
+	icon?: React.ReactNode;
+	label?: string;
+	variant?: ButtonVariant;
+	theme?: ButtonTheme;
+	size?: ButtonSize;
+	options?: Array<{
+		id: string;
+		icon: React.ReactNode;
+		label?: string;
+		onSelect: (_: string) => void;
+	}>;
 };

@@ -2,12 +2,11 @@ import { AddExpenseWizard, Home, Placeholder, Seo, TopBar } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { Button, MaterialIcon } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
-import React, { useState } from "react";
+import React from "react";
 
 type HomePageProps = {
 	user: IUser;
@@ -20,7 +19,6 @@ const HomePage: React.FC<HomePageProps> = () => {
 		syncOnMount: true,
 	});
 	const { user } = useAuthStore();
-	const [openAddWizard, setOpenAddWizard] = useState(false);
 	return (
 		<>
 			<Seo title={`${user?.name} - Home | ${AppSeo.title}`} />
@@ -29,41 +27,12 @@ const HomePage: React.FC<HomePageProps> = () => {
 				{isLoading ? (
 					<ExpenseTableSkeleton />
 				) : expenses.length > 0 ? (
-					<>
-						<Home.Body />
-						{/* <section className={classes("-expenses")}>
-							{expenses.map((e) => (
-								<ExpenseRow
-									key={`home-expense-${e.id}`}
-									expense={e}
-								/>
-							))}
-						</section>
-						<section className={classes("-summary")}>
-							<div className={classes("-current")}>
-								<Typography>
-									{dayjs().format(
-										"dddd, DD MMMM YYYY, h:mm A"
-									)}
-								</Typography>
-							</div>
-							<ExpensesSummaryWidget summary={summary} />
-						</section> */}
-					</>
+					<Home.Body />
 				) : (
-					<Placeholder action={() => setOpenAddWizard(true)} />
+					<Placeholder />
 				)}
-				<Button
-					className={classes("-cta")}
-					size="large"
-					onClick={() => setOpenAddWizard(true)}
-				>
-					<MaterialIcon icon="add" />
-				</Button>
 			</main>
-			{openAddWizard ? (
-				<AddExpenseWizard onClose={() => setOpenAddWizard(false)} />
-			) : null}
+			{user ? <AddExpenseWizard /> : null}
 		</>
 	);
 };

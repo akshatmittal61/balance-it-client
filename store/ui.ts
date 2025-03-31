@@ -37,7 +37,7 @@ type Store = State & Action;
 const store = create<Store>((set, get) => {
 	return {
 		vh: 0,
-		theme: appTheme.light,
+		theme: appTheme?.light || "light",
 		accentColor: "0, 0, 0",
 		isSidebarExpanded: true,
 		networkStatus: "online",

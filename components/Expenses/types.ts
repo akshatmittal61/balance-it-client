@@ -1,6 +1,4 @@
-export type AddExpenseWizardProps = {
-	onClose: () => void;
-};
+export type AddExpenseWizardProps = {};
 
 export type TagProps = {
 	tag: string;
