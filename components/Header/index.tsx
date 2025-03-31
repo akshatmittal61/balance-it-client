@@ -1,6 +1,6 @@
 import { fallbackAssets, routes } from "@/constants";
 import { Avatar, Button, IconButton, MaterialIcon } from "@/library";
-import { useAuthStore, useUiStore } from "@/store";
+import { useAuthStore, useUiStore, useWalletStore } from "@/store";
 import { stylesConfig } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,7 @@ const classes = stylesConfig(styles, "header");
 export const Header: React.FC<IHeaderProps> = () => {
 	const router = useRouter();
 	const { isLoggedIn, user, sync: syncAuthState } = useAuthStore();
+	const { sync: syncWalletState } = useWalletStore();
 	const {
 		theme,
 		toggleTheme,
@@ -35,7 +36,7 @@ export const Header: React.FC<IHeaderProps> = () => {
 
 	const syncEverything = async () => {
 		setIsSyncing(true);
-		await Promise.all([syncAuthState(), syncUiState()]);
+		await Promise.all([syncAuthState(), syncWalletState(), syncUiState()]);
 		setIsSyncing(false);
 	};
 

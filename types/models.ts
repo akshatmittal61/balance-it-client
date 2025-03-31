@@ -58,4 +58,19 @@ export type Expense = Model<{
 	icon?: string;
 	type: T_EXPENSE_TYPE;
 	method?: string;
+	splits?: Array<Omit<Split, "expense">>;
+}>;
+
+/**
+ * Split model - When a user splits an expense
+ * @param {string} expense - Expense id (References Expense model)
+ * @param {string} user - User id (References User model)
+ * @param {number} pending - Pending amount
+ * @param {number} completed - Completed amount
+ */
+export type Split = Model<{
+	expense: Expense;
+	user: IUser;
+	pending: number;
+	completed: number;
 }>;

@@ -80,7 +80,7 @@
 	padding: 1rem;
 	display: flex;
 	justify-content: flex-start;
-	align-items: flex-start;
+	align-items: center;
 	gap: 12px;
 	cursor: pointer;
 	border-bottom: 1px solid var(--theme-light-grey);
@@ -110,6 +110,7 @@
 
 	&-title {
 		max-width: 60%;
+		margin-right: auto;
 
 		@include responsive(phone) {
 			max-width: unset;
@@ -119,7 +120,6 @@
 
 	&-amount {
 		text-align: right;
-		margin-left: auto;
 
 		&--paid {
 			color: var(--material-red);

@@ -11,6 +11,7 @@ import { FiChevronLeft, FiUsers, FiX } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddExpenseScreen, AddExpenseWizardProps, TagProps } from "./types";
+import { Logger } from "@/log";
 
 const classes = stylesConfig(styles, "expense-wizard");
 
@@ -55,6 +56,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 		amount: 0,
 		tags: [],
 		timestamp: new Date().toISOString(),
+		splits: [],
 		icon: "",
 		type: EXPENSE_TYPE.PAID,
 		method: "UPI",
@@ -84,6 +86,17 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 			.split(",")
 			.map((tag) => tag.trim())
 			.filter(Boolean);
+		if (payload.splits !== undefined) {
+			if (payload.splits.length === 0) {
+				delete payload.splits;
+			}
+			if (
+				payload.splits?.length === 1 &&
+				payload.splits[0].user === user?.id
+			) {
+				delete payload.splits;
+			}
+		}
 		try {
 			await createExpense(payload);
 			onClose();
@@ -375,30 +388,55 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							title={(() => {
 								if (isAdding) return "Creating...";
 								if (payload.amount <= 0) return "Enter Amount";
-								if (
-									members.some(
-										(member) => member.amount === 0
-									)
-								)
-									return "Enter Amount for all members";
-								if (
-									members
-										.map((user) => user.amount)
-										.reduce((a, b) => a + b, 0) !==
-									payload.amount
-								)
-									return "Enter Amount for all members";
+								if (members.length > 0) {
+									// the only member is the logged in user
+									if (
+										members.length === 1 &&
+										members[0].id === user?.id
+									) {
+										return "Create";
+									}
+									// some members have 0 amount
+									if (members.some((m) => m.amount === 0)) {
+										return "Enter Amount for all members";
+									}
+									// if the total amount is not equal to sum of members split
+									if (
+										members
+											.map((user) => user.amount)
+											.reduce((a, b) => a + b, 0) !==
+										payload.amount
+									) {
+										return "Enter Amount for all members";
+									}
+								}
 								return "Create";
 							})()}
-							disabled={
-								isAdding ||
-								payload.amount <= 0 ||
-								members.some((member) => member.amount === 0) ||
-								members
-									.map((user) => user.amount)
-									.reduce((a, b) => a + b, 0) !==
-									payload.amount
-							}
+							disabled={(() => {
+								if (isAdding) return true;
+								if (payload.amount <= 0) return true;
+								if (members.length > 0) {
+									if (
+										members.length === 1 &&
+										members[0].id === user?.id
+									) {
+										return false;
+									}
+									// some members have 0 amount
+									if (members.some((m) => m.amount === 0)) {
+										return true;
+									}
+									// if the total amount is not equal to sum of members split
+									if (
+										members
+											.map((user) => user.amount)
+											.reduce((a, b) => a + b, 0) !==
+										payload.amount
+									) {
+										return true;
+									}
+								}
+							})()}
 						>
 							Add
 						</Button>

@@ -1,7 +1,7 @@
 import { WalletApi } from "@/api";
 import { initialExpensesSummary } from "@/constants";
 import { Logger } from "@/log";
-import { CreateExpense, Expense, ExpensesSummary } from "@/types";
+import { CreateExpense, Expense, ExpensesSummary, Split } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { createSelectors } from "./utils";
@@ -10,6 +10,7 @@ type State = {
 	expenses: Array<Expense>;
 	summary: ExpensesSummary;
 	tags: Array<string>;
+	splits: Array<Split>;
 };
 
 type Getter<T extends keyof State> = () => State[T];
@@ -21,6 +22,7 @@ type Action = {
 	getTags: Getter<"tags">;
 	setExpenses: Setter<"expenses">;
 	setSummary: Setter<"summary">;
+	setSplits: Setter<"splits">;
 };
 
 type Store = State & Action;
@@ -30,6 +32,9 @@ const store = create<Store>((set, get) => {
 		expenses: [],
 		summary: initialExpensesSummary,
 		tags: [],
+		splits: [],
+		getSplits: () => get().splits,
+		setSplits: (splits) => set({ splits }),
 		getExpenses: () => get().expenses,
 		getSummary: () => get().summary,
 		getTags: () => get().tags,
@@ -88,6 +93,7 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 			store.setExpenses([created.data, ...store.expenses]);
 		} catch (err) {
 			Logger.error(err);
+			throw err;
 		} finally {
 			setIsAdding(false);
 		}
