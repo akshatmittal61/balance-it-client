@@ -2,13 +2,13 @@ import { EXPENSE_TYPE, expenseMethods } from "@/constants";
 import { Responsive } from "@/layouts";
 import { Button, CheckBox, Input, Pane } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
-import { CreateExpense, IUser, T_EXPENSE_TYPE } from "@/types";
-import { enumToText, stylesConfig } from "@/utils";
+import { CreateExpense, T_EXPENSE_TYPE } from "@/types";
+import { enumToText, Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FiChevronLeft, FiUsers, FiX } from "react-icons/fi";
-import { MembersWindow } from "./splits";
+import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddExpenseScreen, AddExpenseWizardProps, TagProps } from "./types";
 
@@ -47,8 +47,8 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 	const [tagsStr, setTagsStr] = useState("");
 	const [currentScreen, setCurrentScreen] =
 		useState<AddExpenseScreen>("default");
-	const [selectedMembers, setSelectedMembers] = useState<Array<IUser>>(
-		user ? [user] : []
+	const [members, setMembers] = useState<Array<ExpenseUser>>(
+		user ? [{ ...user, amount: 0, value: 0 }] : []
 	);
 	const [payload, setPayload] = useState<CreateExpense>({
 		title: "",
@@ -69,10 +69,11 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 				[name]: new Date(value).toISOString(),
 			}));
 		} else if (name === "amount") {
-			setPayload((p) => ({
-				...p,
-				[name]: Number(value),
-			}));
+			if (value.startsWith("0") && value.length > 1) {
+				setPayload({ ...payload, [name]: +value.slice(1) });
+			} else {
+				setPayload({ ...payload, [name]: +value });
+			}
 		} else {
 			setPayload((p) => ({ ...p, [name]: value }));
 		}
@@ -83,9 +84,12 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 			.split(",")
 			.map((tag) => tag.trim())
 			.filter(Boolean);
-		await createExpense(payload).then(() => {
+		try {
+			await createExpense(payload);
 			onClose();
-		});
+		} catch (error) {
+			Notify.error(error);
+		}
 	};
 	return (
 		<Pane title="Add Expense" onClose={onClose} direction="bottom">
@@ -119,7 +123,6 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 							>
 								<Input
 									name="amount"
-									type="number"
 									label="Amount"
 									placeholder="Amount e.g. 100"
 									value={payload.amount}
@@ -310,12 +313,17 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 						</>
 					) : currentScreen === "splits" ? (
 						<MembersWindow
-							selectedMembers={selectedMembers}
-							setSelectedMembers={(users) => {
-								setSelectedMembers(users);
+							defaultMethod={distributionMethods.equal}
+							totalAmount={payload.amount}
+							members={members}
+							setMembers={(users) => {
+								setMembers(users);
 								setPayload((p) => ({
 									...p,
-									members: users.map((user) => user.id),
+									splits: users.map((user) => ({
+										user: user.id,
+										amount: user.amount,
+									})),
 								}));
 							}}
 						/>
@@ -328,30 +336,70 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 						xsm={100}
 						className={classes("-action")}
 					>
-						{currentScreen === "default" ? (
-							<Button
-								type="button"
-								size="large"
-								variant="outlined"
-								onClick={() => setCurrentScreen("splits")}
-								icon={<FiUsers />}
-								iconPosition="left"
-							>
-								Split with friends?
-							</Button>
-						) : (
-							<Button
-								type="button"
-								size="large"
-								variant="outlined"
-								onClick={() => setCurrentScreen("default")}
-								icon={<FiChevronLeft />}
-								iconPosition="left"
-							>
-								Go back
-							</Button>
-						)}
-						<Button type="submit" size="large" loading={isAdding}>
+						{payload.amount > 0 ? (
+							currentScreen === "default" ? (
+								<Button
+									type="button"
+									size="large"
+									variant="outlined"
+									onClick={() => {
+										if (!payload.title) {
+											return Notify.error(
+												"Please enter a title"
+											);
+										}
+										setCurrentScreen("splits");
+									}}
+									icon={<FiUsers />}
+									iconPosition="left"
+								>
+									Split with friends?
+								</Button>
+							) : (
+								<Button
+									type="button"
+									size="large"
+									variant="outlined"
+									onClick={() => setCurrentScreen("default")}
+									icon={<FiChevronLeft />}
+									iconPosition="left"
+								>
+									Go back
+								</Button>
+							)
+						) : null}
+						<Button
+							type="submit"
+							size="large"
+							loading={isAdding}
+							title={(() => {
+								if (isAdding) return "Creating...";
+								if (payload.amount <= 0) return "Enter Amount";
+								if (
+									members.some(
+										(member) => member.amount === 0
+									)
+								)
+									return "Enter Amount for all members";
+								if (
+									members
+										.map((user) => user.amount)
+										.reduce((a, b) => a + b, 0) !==
+									payload.amount
+								)
+									return "Enter Amount for all members";
+								return "Create";
+							})()}
+							disabled={
+								isAdding ||
+								payload.amount <= 0 ||
+								members.some((member) => member.amount === 0) ||
+								members
+									.map((user) => user.amount)
+									.reduce((a, b) => a + b, 0) !==
+									payload.amount
+							}
+						>
 							Add
 						</Button>
 					</Responsive.Col>

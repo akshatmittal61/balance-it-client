@@ -1,17 +1,18 @@
 import { IUser } from "@/types";
-
-export type DistributionMethod = "equal" | "percentage" | "fraction" | "custom";
+import { DistributionMethod, ExpenseUser } from "./distribution/types";
+export * from "./distribution/types";
 
 export type MembersWindowProps = {
-	selectedMembers: Array<IUser>;
-	setSelectedMembers: (_: Array<IUser>) => void;
+	defaultMethod: DistributionMethod;
+	members: Array<ExpenseUser>;
+	setMembers: (_: Array<ExpenseUser>) => void;
+	totalAmount: number;
 };
 
 export type MembersUserProps = IUser & {
 	index: number;
 	isSelected?: boolean;
 	onSelect?: () => void;
-	onRemove?: () => void;
 };
 
 export type SplitsPlaceholderProps = {
@@ -23,10 +24,4 @@ export type SplitsPlaceholderProps = {
 export type BulkEditorProps = {
 	selectedMembers: Array<IUser>;
 	setSelectedMembers: (_: Array<IUser>) => void;
-};
-
-export type ExpenseUser = IUser & {
-	selected: boolean;
-	amount: number;
-	value: number | string;
 };

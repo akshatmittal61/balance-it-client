@@ -1,12 +1,5 @@
-import { getEnumeration, stylesConfig } from "@/utils";
-import { DistributionMethod } from "./types";
+import { stylesConfig } from "@/utils";
 import styles from "./styles.module.scss";
+export * from "./distribution/assets";
 
 export const classes = stylesConfig(styles, "splits");
-
-export const distributionMethods = getEnumeration<DistributionMethod>([
-	"equal",
-	"percentage",
-	"fraction",
-	"custom",
-]);

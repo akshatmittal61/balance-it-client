@@ -1,11 +1,5 @@
 import { fallbackAssets } from "@/constants";
-import {
-	Avatar,
-	CheckBox,
-	IconButton,
-	MaterialIcon,
-	Typography,
-} from "@/library";
+import { Avatar, CheckBox, Typography } from "@/library";
 import React from "react";
 import { classes } from "./assets";
 import { MembersUserProps } from "./types";
@@ -16,7 +10,6 @@ export const MembersUser: React.FC<MembersUserProps> = ({
 	avatar,
 	onSelect,
 	isSelected,
-	onRemove,
 	index,
 }) => {
 	return (
@@ -39,12 +32,6 @@ export const MembersUser: React.FC<MembersUserProps> = ({
 				</Typography>
 				<Typography size="s">{email}</Typography>
 			</div>
-			{onRemove ? (
-				<IconButton
-					onClick={onRemove}
-					icon={<MaterialIcon icon="close" />}
-				/>
-			) : null}
 		</div>
 	);
 };

@@ -2,19 +2,30 @@ import { UserApi } from "@/api";
 import { Loader } from "@/components";
 import { useDebounce, useHttpClient } from "@/hooks";
 import { IconButton, Input, MaterialIcon, Typography } from "@/library";
+import { Logger } from "@/log";
 import { useAuthStore } from "@/store";
 import { IUser } from "@/types";
+import { runningCase } from "@/utils";
 import React, { useEffect, useState } from "react";
-import { classes } from "./assets";
+import { classes, distributionMethods } from "./assets";
 import { BulkEditor } from "./bulk-editor";
+import { DistributionMember } from "./distribution";
 import { MembersUser } from "./member";
 import { SplitsPlaceholder } from "./placeholder";
-import { MembersWindowProps } from "./types";
+import { DistributionMethod, ExpenseUser, MembersWindowProps } from "./types";
+import { ExpenseUtils } from "./utils";
+export * from "./assets";
+export * from "./types";
 
 export const MembersWindow: React.FC<MembersWindowProps> = ({
-	selectedMembers,
-	setSelectedMembers,
+	defaultMethod,
+	members,
+	setMembers,
+	totalAmount,
 }) => {
+	const [method, setMethod] = useState<DistributionMethod>(
+		defaultMethod || distributionMethods.equal
+	);
 	const { user: loggedInUser } = useAuthStore();
 	const [searchResults, setSearchResults] = useState<Array<IUser>>([]);
 	const [openBulkEditor, setOpenBulkEditor] = useState(false);
@@ -29,18 +40,182 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		setSearchResults(res);
 	};
 
+	const handleRemoveUser = (member: ExpenseUser) => {
+		const newMembers = members
+			.filter((m) => m.id !== member.id)
+			.map((member) => {
+				if (method === distributionMethods.equal) {
+					const newAmount = ExpenseUtils.getAmount(
+						member.value,
+						method,
+						members.length - 1,
+						totalAmount
+					);
+					const newValue = ExpenseUtils.getFormattedValue(
+						newAmount,
+						method,
+						members.length - 1,
+						totalAmount
+					);
+					return {
+						...member,
+						amount: newAmount,
+						value: newValue,
+					};
+				} else {
+					return member;
+				}
+			});
+		setMembers(newMembers);
+	};
+
 	const handleSelectUser = (user: IUser) => {
-		const isUserSelected = selectedMembers
-			.map((user) => user.id)
+		const isUserCurrentlySelected = members
+			.map((m) => m.id)
 			.includes(user.id);
-		if (isUserSelected) {
-			const filteredUser = selectedMembers.filter(
-				(u) => u.id !== user.id
-			);
-			setSelectedMembers(filteredUser);
+		if (isUserCurrentlySelected) {
+			const newCount = members.length - 1;
+			const newMembers = members
+				.filter((m) => m.id !== user.id)
+				.map((member) => {
+					if (method === distributionMethods.equal) {
+						const newAmount = ExpenseUtils.getAmount(
+							member.value,
+							method,
+							newCount,
+							totalAmount
+						);
+						const newValue = ExpenseUtils.getFormattedValue(
+							newAmount,
+							method,
+							newCount,
+							totalAmount
+						);
+						return {
+							...member,
+							amount: newAmount,
+							value: newValue,
+						};
+					} else {
+						return member;
+					}
+				});
+			setMembers(newMembers);
 		} else {
-			setSelectedMembers([...selectedMembers, user]);
+			const newCount = members.length + 1;
+			const newMembers = [
+				...members.map((member) => {
+					if (method === distributionMethods.equal) {
+						const newAmount = ExpenseUtils.getAmount(
+							member.value,
+							method,
+							newCount,
+							totalAmount
+						);
+						const newValue = ExpenseUtils.getFormattedValue(
+							newAmount,
+							method,
+							newCount,
+							totalAmount
+						);
+						return {
+							...member,
+							amount: newAmount,
+							value: newValue,
+						};
+					} else {
+						return member;
+					}
+				}),
+				ExpenseUtils.makeExpenseUser(
+					user,
+					method,
+					newCount,
+					totalAmount
+				),
+			];
+			setMembers(newMembers);
 		}
+		setSearchStr("");
+	};
+
+	const handleMethodChange = (newMethod: DistributionMethod) => {
+		const oldMethod = method;
+		Logger.debug(oldMethod, newMethod);
+		const newMembers = members.map((member) => {
+			if (newMethod === distributionMethods.equal) {
+				const newAmount = ExpenseUtils.getAmount(
+					member.value,
+					newMethod,
+					members.length,
+					totalAmount
+				);
+				const newValue = ExpenseUtils.getFormattedValue(
+					newAmount,
+					newMethod,
+					members.length,
+					totalAmount
+				);
+				return {
+					...member,
+					amount: newAmount,
+					value: newValue,
+				};
+			}
+			const value = member.value;
+			Logger.debug(value);
+			const amount = ExpenseUtils.getAmount(
+				value,
+				oldMethod,
+				members.length,
+				totalAmount
+			);
+			const newValue = ExpenseUtils.getFormattedValue(
+				amount,
+				newMethod,
+				members.length,
+				totalAmount
+			);
+			Logger.debug(amount, newValue);
+			return {
+				...member,
+				value: newValue,
+				amount,
+			};
+		});
+		setMethod(newMethod);
+		setMembers(newMembers);
+	};
+
+	const handleValueChange = (
+		value: string | number,
+		method: DistributionMethod,
+		member: IUser
+	) => {
+		const amount = ExpenseUtils.getAmount(
+			value,
+			method,
+			members.length,
+			totalAmount
+		);
+		const newValue = ExpenseUtils.getFormattedValue(
+			amount,
+			method,
+			members.length,
+			totalAmount
+		);
+		Logger.debug(amount, newValue);
+		const newMembers = members.map((m) => {
+			if (m.id === member.id) {
+				return {
+					...m,
+					value,
+					amount,
+				};
+			}
+			return m;
+		});
+		setMembers(newMembers);
 	};
 
 	useEffect(() => {
@@ -51,6 +226,12 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearchStr]);
+
+	useEffect(() => {
+		handleMethodChange(method);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [totalAmount]);
+
 	return (
 		<>
 			<div className={classes("-header")}>
@@ -82,10 +263,71 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					/>
 				</div>
 			</div>
+			<div className={classes("-header")}>
+				<Typography>Split Balance</Typography>
+				<div className={classes("-header-controls")}>
+					<Input
+						placeholder="Equal"
+						value={runningCase(method)}
+						dropdown={{
+							enabled: true,
+							options: Object.values(distributionMethods).map(
+								(method, index) => ({
+									id: `distribution-method-option-${index}`,
+									value: method,
+									label: runningCase(method),
+								})
+							),
+							onSelect: (option) => {
+								handleMethodChange(
+									option.value as DistributionMethod
+								);
+							},
+						}}
+					/>
+				</div>
+			</div>
 			{openBulkEditor ? (
 				<BulkEditor
-					selectedMembers={selectedMembers}
-					setSelectedMembers={setSelectedMembers}
+					selectedMembers={members}
+					setSelectedMembers={(users) => {
+						const finalMembers = users.map((u) => {
+							if (method === distributionMethods.equal) {
+								const newAmount = ExpenseUtils.getAmount(
+									"",
+									method,
+									users.length,
+									totalAmount
+								);
+								const newValue = ExpenseUtils.getFormattedValue(
+									newAmount,
+									method,
+									users.length,
+									totalAmount
+								);
+								return {
+									...u,
+									amount: newAmount,
+									value: newValue,
+								};
+							} else {
+								if (members.find((m) => m.email === u.email)) {
+									const foundMember = members.find(
+										(m) => m.email === u.email
+									)!;
+									return foundMember;
+								} else {
+									return ExpenseUtils.makeExpenseUser(
+										u,
+										method,
+										members.length,
+										totalAmount
+									);
+								}
+							}
+						});
+						setMembers(finalMembers);
+					}}
 				/>
 			) : null}
 			{debouncedSearchStr.length > 0 ? (
@@ -102,7 +344,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 									? undefined
 									: () => handleSelectUser(user)
 							}
-							isSelected={selectedMembers
+							isSelected={members
 								.map((user) => user.id)
 								.includes(user.id)}
 						/>
@@ -119,16 +361,22 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					/>
 				)
 			) : (
-				selectedMembers.map((user, index) => (
-					<MembersUser
-						{...user}
-						key={`group-manager-user-${user.id}`}
-						index={index}
+				members.map((member) => (
+					<DistributionMember
+						member={member}
+						key={`split-manager-user-${member.id}`}
+						distributionMethod={method}
 						onRemove={
-							loggedInUser && user.id === loggedInUser.id
+							loggedInUser && member.id === loggedInUser.id
 								? undefined
-								: () => handleSelectUser(user)
+								: () => handleRemoveUser(member)
 						}
+						onChange={(
+							value: string | number,
+							method: DistributionMethod
+						) => {
+							handleValueChange(value, method, member);
+						}}
 					/>
 				))
 			)}
