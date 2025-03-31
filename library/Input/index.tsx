@@ -110,9 +110,17 @@ export const Input: React.FC<InputProps> = ({
 								const search = e.target.value;
 								const options = dropdown.options.filter(
 									(option) =>
-										option.label
-											.toLowerCase()
-											.includes(search.toLowerCase())
+										typeof option.label === "string"
+											? option.label
+													.toLowerCase()
+													.includes(
+														search.toLowerCase()
+													)
+											: option.id
+													.toLowerCase()
+													.includes(
+														search.toLowerCase()
+													)
 								);
 								setOptionsToRender(options);
 								if (dropdown.onSearch)

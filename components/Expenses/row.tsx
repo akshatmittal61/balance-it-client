@@ -1,54 +1,213 @@
-import { EXPENSE_TYPE, fallbackAssets } from "@/constants";
-import { Avatars, Typography } from "@/library";
-import { Expense } from "@/types";
-import { stylesConfig } from "@/utils";
+import { expenseMethods, expenseTypes, fallbackAssets } from "@/constants";
+import { Avatar, Avatars, Pill, Typography } from "@/library";
+import { useAuthStore, useWalletStore } from "@/store";
+import { Expense, Split } from "@/types";
+import { Notify, roundOff, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
-import React from "react";
+import Image from "next/image";
+import React, { useState } from "react";
+import { FiTrash } from "react-icons/fi";
 import styles from "./styles.module.scss";
 
 type ExpenseRowProps = {
 	expense: Expense;
+	expanded: boolean;
+	onExpand: () => void;
+};
+
+type ExpenseRowSplitProps = {
+	expense: Expense;
+	split: Omit<Split, "expense">;
+	onUpdate: () => void;
 };
 
 const classes = stylesConfig(styles, "expense-row");
 
-export const ExpenseRow: React.FC<ExpenseRowProps> = ({ expense }) => {
+const ExpenseRowSplit: React.FC<ExpenseRowSplitProps> = ({
+	expense,
+	split,
+	onUpdate,
+}) => {
+	const { user: loggedInUser } = useAuthStore();
+	const { pending, completed, user } = split;
+	const [settling, setSettling] = useState(false);
+	const settleMember = async () => {
+		try {
+			setSettling(true);
+			/* const updatedMembersRes = await MemberApi.settleMemberInExpense({
+				groupId: expense.group.id,
+				expenseId: expense.id,
+				memberId: id,
+			});
+			onUpdateMembers(updatedMembersRes.data); */
+			onUpdate();
+		} catch (error) {
+			Notify.error(error);
+		} finally {
+			setSettling(false);
+		}
+	};
+	return (
+		<div
+			className={classes("-split", {
+				"-split--owed": pending > 0,
+				"-split--settling": settling,
+				"-split--settled":
+					pending === 0 || expense.author.id === user.id,
+			})}
+		>
+			<Avatar
+				src={user.avatar || fallbackAssets.avatar}
+				alt={user.name || user.email}
+				size={36}
+			/>
+			{(() => {
+				if (expense.author.id === user.id) {
+					return (
+						<Typography size="sm">
+							{`${expense.author.name || expense.author.email.slice(0, 7) + "..."} paid ${roundOff(completed, 2)} for this expense`}
+						</Typography>
+					);
+				} else {
+					if (pending === 0) {
+						return (
+							<Typography size="sm">
+								{`${user.name || user.email.slice(0, 7) + "..."} has paid ${roundOff(completed, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
+							</Typography>
+						);
+					} else {
+						return (
+							<Typography size="sm">
+								{`${user.name || user.email.slice(0, 7) + "..."} owes ${roundOff(pending, 2)} to ${expense.author.name || expense.author.email.slice(0, 7) + "..."}`}
+							</Typography>
+						);
+					}
+				}
+			})()}
+			{expense.author.id === loggedInUser?.id ? (
+				<button
+					disabled={pending === 0 || settling}
+					className={classes("-split-btn", {
+						"-split-btn--settled": pending === 0,
+					})}
+					onClick={settleMember}
+				>
+					{pending === 0 ? (
+						"Settled"
+					) : settling ? (
+						<span className={classes("-split-btn--loader")} />
+					) : (
+						"Settle"
+					)}
+				</button>
+			) : pending === 0 ? (
+				<Typography
+					size="sm"
+					style={{
+						color: pending === 0 ? "green" : "red",
+					}}
+					className={classes("-split-btn", "-split-btn--disabled")}
+				>
+					Settled
+				</Typography>
+			) : null}
+		</div>
+	);
+};
+
+export const ExpenseRow: React.FC<ExpenseRowProps> = ({
+	expense,
+	expanded,
+	onExpand,
+}) => {
+	const { sync } = useWalletStore();
 	return (
 		<>
-			<div
-				className={classes("")}
-				// onClick={() => setOpenViewExpensePopup(true)}
-			>
-				<Typography className={classes("-date")}>
-					{dayjs(expense.timestamp).format("MMM DD, HH:mm")}
-				</Typography>
-				<Typography className={classes("-title")}>
-					{expense.title}
-				</Typography>
-				{expense.splits && expense.splits.length > 0 ? (
-					<div className={classes("-splits")}>
-						<Avatars size={36}>
-							{expense.splits.map((exp) => ({
-								src: exp.user.avatar || fallbackAssets.avatar,
-								alt:
-									(exp.user.name ||
-										exp.user.email.split("@")[0]) +
-									" - " +
-									(exp.pending + exp.completed),
-							}))}
-						</Avatars>
+			<div className={classes("")}>
+				<div className={classes("-main")} onClick={onExpand}>
+					<Typography className={classes("-date")}>
+						{dayjs(expense.timestamp).format("MMM DD, HH:mm")}
+					</Typography>
+					<Typography className={classes("-title")}>
+						{expense.title}
+					</Typography>
+					{expense.splits &&
+					expense.splits.length > 0 &&
+					!expanded ? (
+						<div className={classes("-splits")}>
+							<Avatars size={24}>
+								{expense.splits.map((exp) => ({
+									src:
+										exp.user.avatar ||
+										fallbackAssets.avatar,
+									alt:
+										(exp.user.name ||
+											exp.user.email.split("@")[0]) +
+										" - " +
+										(exp.pending + exp.completed),
+								}))}
+							</Avatars>
+						</div>
+					) : null}
+					<Typography
+						weight="medium"
+						className={classes("-amount")}
+						style={{
+							color: `var(--${expenseTypes[expense.type].theme}-500)`,
+						}}
+					>
+						{expense.amount}
+					</Typography>
+				</div>
+				{expanded ? (
+					<div className={classes("-info")}>
+						<div className={classes("-transfer")}>
+							<Pill
+								icon={expenseTypes[expense.type].icon}
+								label={expenseTypes[expense.type].label}
+								theme={expenseTypes[expense.type].theme}
+							/>
+							<div className={classes("-actions")}>
+								<button className={classes("-actions__action")}>
+									<FiTrash />
+								</button>
+							</div>
+						</div>
+						<div className={classes("-extra_info")}>
+							<div className={classes("-tags")}>
+								{expense.tags?.map((tag) => (
+									<Pill
+										key={`expense-${expense.id}-tag-${tag}`}
+										dot={false}
+										label={tag}
+										theme="metal"
+									/>
+								))}
+							</div>
+							{expense.method ? (
+								<Image
+									src={expenseMethods[expense.method].logo}
+									alt={expenseMethods[expense.method].label}
+									width={24}
+									height={24}
+									className={classes("-method-logo")}
+								/>
+							) : null}
+						</div>
+						{expense.splits && expense.splits.length > 0 ? (
+							<div className={classes("-info-splits")}>
+								{expense.splits.map((split, index) => (
+									<ExpenseRowSplit
+										key={`expense-${expense.id}-split-${index}`}
+										expense={expense}
+										split={split}
+										onUpdate={sync}
+									/>
+								))}
+							</div>
+						) : null}
 					</div>
 				) : null}
-				<Typography
-					weight="medium"
-					className={classes("-amount", {
-						"-amount--paid": expense.type === EXPENSE_TYPE.PAID,
-						"-amount--received":
-							expense.type === EXPENSE_TYPE.RECEIVED,
-					})}
-				>
-					{expense.amount}
-				</Typography>
 			</div>
 		</>
 	);

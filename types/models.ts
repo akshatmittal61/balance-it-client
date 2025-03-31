@@ -1,5 +1,5 @@
 import { IUser } from "./client";
-import { T_EXPENSE_TYPE, T_USER_STATUS } from "./enum";
+import { T_EXPENSE_METHOD, T_EXPENSE_TYPE, T_USER_STATUS } from "./enum";
 import { Model } from "./parser";
 
 /**
@@ -45,7 +45,7 @@ export type Group = Model<{
  * @param {string} group - Group id (References Group model) (optional - for group expenses)
  * @param {string[]} tags - Tags for the expense (optional)
  * @param {string} icon - Icon of the expense (optional)
- * @param {string} type - Type of the expense (Personal, Group)
+ * @param {string} type - Type of the expense (Paid, Received, Self)
  * @param {string} method - Method of the expense (Cash, Card, UPI, Netbanking)
  */
 export type Expense = Model<{
@@ -57,7 +57,7 @@ export type Expense = Model<{
 	tags?: string[];
 	icon?: string;
 	type: T_EXPENSE_TYPE;
-	method?: string;
+	method?: T_EXPENSE_METHOD;
 	splits?: Array<Omit<Split, "expense">>;
 }>;
 

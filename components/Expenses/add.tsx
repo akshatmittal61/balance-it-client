@@ -1,9 +1,9 @@
-import { EXPENSE_TYPE, expenseMethods } from "@/constants";
+import { expenseMethods, expenseTypes } from "@/constants";
 import { Responsive } from "@/layouts";
-import { Button, CheckBox, Input, Pane } from "@/library";
+import { Button, CheckBox, Input, Pane, Typography } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { CreateExpense, T_EXPENSE_TYPE } from "@/types";
-import { enumToText, Notify, stylesConfig } from "@/utils";
+import { Notify, stylesConfig } from "@/utils";
 import dayjs from "dayjs";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -11,7 +11,6 @@ import { FiChevronLeft, FiUsers, FiX } from "react-icons/fi";
 import { distributionMethods, ExpenseUser, MembersWindow } from "./splits";
 import styles from "./styles.module.scss";
 import { AddExpenseScreen, AddExpenseWizardProps, TagProps } from "./types";
-import { Logger } from "@/log";
 
 const classes = stylesConfig(styles, "expense-wizard");
 
@@ -58,7 +57,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 		timestamp: new Date().toISOString(),
 		splits: [],
 		icon: "",
-		type: EXPENSE_TYPE.PAID,
+		type: expenseTypes.PAID.id,
 		method: "UPI",
 		author: user ? user.id : "",
 	});
@@ -174,15 +173,24 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = ({
 									type="text"
 									placeholder="Type e.g. Paid"
 									label="Type"
-									value={enumToText(payload.type)}
+									value={expenseTypes[payload.type].label}
 									dropdown={{
 										enabled: true,
 										options: Object.values(
-											EXPENSE_TYPE
+											expenseTypes
 										).map((type) => ({
-											id: type,
-											value: type,
-											label: enumToText(type),
+											id: type.id,
+											value: type.id,
+											label: (
+												<div
+													className={classes("-type")}
+												>
+													{type.icon}
+													<Typography size="sm">
+														{type.label}
+													</Typography>
+												</div>
+											),
 										})),
 										onSelect: (option) => {
 											setPayload((p) => ({

@@ -3,7 +3,7 @@ import React from "react";
 export interface InputDropdownOption {
 	id: any;
 	value: string;
-	label: string;
+	label: React.ReactNode;
 }
 
 export interface InputProps
