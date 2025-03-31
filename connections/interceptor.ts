@@ -1,6 +1,7 @@
 import { AuthApi } from "@/api";
 import { cache, getCacheKey } from "@/cache";
 import { cacheParameter } from "@/constants";
+import { Logger } from "@/log";
 import { ServerSideAuthInterceptor } from "@/types";
 
 export const authRouterInterceptor: ServerSideAuthInterceptor = async (
@@ -9,6 +10,7 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 ) => {
 	const { req } = context;
 	const cookies = req.cookies;
+	Logger.debug("cookies", cookies);
 	if (!cookies.accessToken || !cookies.refreshToken) {
 		return onLoggedOut();
 	}
@@ -20,6 +22,7 @@ export const authRouterInterceptor: ServerSideAuthInterceptor = async (
 		const { data: user } = await cache.fetch(cacheKey, () =>
 			AuthApi.verifyUserIfLoggedIn(headers)
 		);
+		Logger.info("user", user);
 		if (user.name) {
 			return onLoggedInAndOnboarded(user, headers);
 		} else {

@@ -94,11 +94,7 @@ const handler: NextApiHandler = async (req: ApiRequest, res: ApiResponse) => {
 		return res.status(response.status).json(response.data);
 	} catch (err: any) {
 		Logger.error(err);
-		if (
-			[HTTP.status.UNAUTHORIZED, HTTP.status.FORBIDDEN].includes(
-				err?.response?.status
-			)
-		) {
+		if (err?.response?.status === HTTP.status.UNAUTHORIZED) {
 			res.setHeader(
 				"Set-Cookie",
 				["accessToken", "refreshToken"].map(

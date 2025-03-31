@@ -36,6 +36,12 @@ export type Group = Model<{
 	author: IUser;
 }>;
 
+type SplitWithoutExpense = Model<{
+	user: IUser;
+	pending: number;
+	completed: number;
+}>;
+
 /**
  * Expense model
  * @param {string} title - Title of the expense
@@ -58,7 +64,7 @@ export type Expense = Model<{
 	icon?: string;
 	type: T_EXPENSE_TYPE;
 	method?: T_EXPENSE_METHOD;
-	splits?: Array<Omit<Split, "expense">>;
+	splits?: Array<SplitWithoutExpense>;
 }>;
 
 /**
@@ -68,9 +74,6 @@ export type Expense = Model<{
  * @param {number} pending - Pending amount
  * @param {number} completed - Completed amount
  */
-export type Split = Model<{
+export type Split = SplitWithoutExpense & {
 	expense: Expense;
-	user: IUser;
-	pending: number;
-	completed: number;
-}>;
+};

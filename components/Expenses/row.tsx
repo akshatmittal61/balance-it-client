@@ -1,4 +1,5 @@
 import { expenseMethods, expenseTypes, fallbackAssets } from "@/constants";
+import { useConfirmationModal } from "@/hooks";
 import { Avatar, Avatars, Pill, Typography } from "@/library";
 import { useAuthStore, useWalletStore } from "@/store";
 import { Expense, Split } from "@/types";
@@ -120,7 +121,33 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 	expanded,
 	onExpand,
 }) => {
-	const { sync } = useWalletStore();
+	const { user: loggedInUser } = useAuthStore();
+	const { sync, deleteExpense, isDeleting } = useWalletStore();
+
+	const deleteExpenseHelper = async () => {
+		try {
+			await deleteExpense(expense.id);
+		} catch (error) {
+			Notify.error(error);
+		}
+	};
+
+	const deleteExpenseConfirmation = useConfirmationModal(
+		`Delete Expense ${expense.title}`,
+		<>
+			Are you sure you want to delete this expense?
+			<br />
+			This action cannot be undone
+		</>,
+		async () => {
+			await deleteExpenseHelper();
+		},
+		() => {
+			onExpand();
+		},
+		isDeleting
+	);
+
 	return (
 		<>
 			<div className={classes("")}>
@@ -168,9 +195,16 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 								theme={expenseTypes[expense.type].theme}
 							/>
 							<div className={classes("-actions")}>
-								<button className={classes("-actions__action")}>
-									<FiTrash />
-								</button>
+								{expense.author.id === loggedInUser?.id ? (
+									<button
+										className={classes("-actions__action")}
+										onClick={() => {
+											deleteExpenseConfirmation.openPopup();
+										}}
+									>
+										<FiTrash />
+									</button>
+								) : null}
 							</div>
 						</div>
 						<div className={classes("-extra_info")}>
@@ -209,6 +243,9 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 					</div>
 				) : null}
 			</div>
+			{deleteExpenseConfirmation.showPopup
+				? deleteExpenseConfirmation.Modal
+				: null}
 		</>
 	);
 };

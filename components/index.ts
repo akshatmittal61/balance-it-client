@@ -1,4 +1,5 @@
 export * as Auth from "./Auth";
+export * from "./Confirmation";
 export { default as Error } from "./Error";
 export * from "./Expenses";
 export * from "./Footer";

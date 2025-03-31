@@ -5,6 +5,7 @@ import {
 	T_EXPENSE_METHOD,
 	T_EXPENSE_TYPE,
 } from "@/types";
+import React from "react";
 import { frontendBaseUrl } from "./variables";
 
 export const expenseMethods: Record<

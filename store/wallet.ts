@@ -1,6 +1,6 @@
 import { WalletApi } from "@/api";
 import { initialExpensesSummary } from "@/constants";
-import { Logger } from "@/log";
+import { useHttpClient } from "@/hooks";
 import { CreateExpense, Expense, ExpensesSummary, Split } from "@/types";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
@@ -58,8 +58,10 @@ type Options = {
 type ReturnType = Store & {
 	isLoading: boolean;
 	isAdding: boolean;
+	isDeleting: boolean;
 	sync: () => void;
 	createExpense: (_: CreateExpense) => Promise<void>;
+	deleteExpense: (_: string) => Promise<void>;
 };
 
 type WalletStoreHook = (_?: Options) => ReturnType;
@@ -67,7 +69,8 @@ type WalletStoreHook = (_?: Options) => ReturnType;
 export const useWalletStore: WalletStoreHook = (options = {}) => {
 	const store = useStore();
 	const [isLoading, setIsLoading] = useState(false);
-	const [isAdding, setIsAdding] = useState(false);
+	const { loading: isAdding, call: addApi } = useHttpClient<Expense>();
+	const { loading: isDeleting, call: deleteApi } = useHttpClient<Expense>();
 
 	const sync = async () => {
 		try {
@@ -87,16 +90,15 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 	};
 
 	const createExpense = async (expense: CreateExpense) => {
-		try {
-			setIsAdding(true);
-			const created = await WalletApi.createExpense(expense);
-			store.setExpenses([created.data, ...store.expenses]);
-		} catch (err) {
-			Logger.error(err);
-			throw err;
-		} finally {
-			setIsAdding(false);
-		}
+		const created = await addApi(WalletApi.createExpense, expense);
+		store.setExpenses([created, ...store.expenses]);
+	};
+
+	const deleteExpense = async (id: string) => {
+		await deleteApi(WalletApi.deleteExpense, id);
+		store.setExpenses(
+			store.expenses.filter((expense) => expense.id !== id)
+		);
 	};
 
 	useEffect(() => {
@@ -110,7 +112,9 @@ export const useWalletStore: WalletStoreHook = (options = {}) => {
 		...store,
 		isLoading,
 		isAdding,
+		isDeleting,
 		sync,
 		createExpense,
+		deleteExpense,
 	};
 };

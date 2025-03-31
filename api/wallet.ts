@@ -21,4 +21,13 @@ export class WalletApi {
 		const res = await http.post("/wallet/expenses", payload, { headers });
 		return res.data;
 	}
+	public static async deleteExpense(
+		expenseId: string,
+		headers?: any
+	): Promise<ApiRes<Expense>> {
+		const response = await http.delete(`/wallet/expenses/${expenseId}`, {
+			headers,
+		});
+		return response.data;
+	}
 }
