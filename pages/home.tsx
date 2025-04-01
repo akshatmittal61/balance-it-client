@@ -2,7 +2,7 @@ import { AddExpenseWizard, Home, Placeholder, Seo, TopBar } from "@/components";
 import { ExpenseTableSkeleton } from "@/components/Expenses/loader";
 import { authRouterInterceptor } from "@/connections";
 import { AppSeo, routes } from "@/constants";
-import { useAuthStore, useWalletStore } from "@/store";
+import { useAuthStore, useGodownStore, useWalletStore } from "@/store";
 import styles from "@/styles/pages/Home.module.scss";
 import { IUser, ServerSideResult } from "@/types";
 import { stylesConfig } from "@/utils";
@@ -18,6 +18,7 @@ const HomePage: React.FC<HomePageProps> = () => {
 	const { expenses, isLoading } = useWalletStore({
 		syncOnMount: true,
 	});
+	useGodownStore({ syncOnMount: true });
 	const { user } = useAuthStore();
 	return (
 		<>

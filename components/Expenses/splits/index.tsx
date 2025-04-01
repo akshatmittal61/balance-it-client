@@ -1,9 +1,10 @@
 import { UserApi } from "@/api";
 import { Loader } from "@/components";
+import { fallbackAssets } from "@/constants";
 import { useDebounce, useHttpClient } from "@/hooks";
-import { IconButton, Input, MaterialIcon, Typography } from "@/library";
+import { Avatar, IconButton, Input, MaterialIcon, Typography } from "@/library";
 import { Logger } from "@/log";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useGodownStore } from "@/store";
 import { IUser } from "@/types";
 import { runningCase } from "@/utils";
 import React, { useEffect, useState } from "react";
@@ -27,6 +28,7 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 		defaultMethod || distributionMethods.equal
 	);
 	const { user: loggedInUser } = useAuthStore();
+	const { friends } = useGodownStore();
 	const [searchResults, setSearchResults] = useState<Array<IUser>>([]);
 	const [openBulkEditor, setOpenBulkEditor] = useState(false);
 	const { loading: searching, call: api } = useHttpClient<Array<IUser>>([]);
@@ -380,6 +382,45 @@ export const MembersWindow: React.FC<MembersWindowProps> = ({
 					/>
 				))
 			)}
+			{friends.length > 0 ? (
+				<div className={classes("-suggestions")}>
+					{friends.map((friend) => (
+						<div
+							key={`add-suggestion-${friend.id}`}
+							className={classes("-suggestion", {
+								"-suggestion--active": members.find(
+									(m) => m.email === friend.email
+								)
+									? true
+									: false,
+							})}
+							onClick={() => {
+								handleSelectUser(friend);
+							}}
+						>
+							<Avatar
+								src={friend.avatar || fallbackAssets.avatar}
+								alt={friend.name || friend.email}
+								size={24}
+							/>
+							<div className={classes("-suggestion-details")}>
+								<Typography
+									size="s"
+									className={classes("-suggestion-name")}
+								>
+									{friend.name || friend.email.split("@")[0]}
+								</Typography>
+								<Typography
+									size="sm"
+									className={classes("-suggestion-email")}
+								>
+									{friend.email}
+								</Typography>
+							</div>
+						</div>
+					))}
+				</div>
+			) : null}
 		</>
 	);
 };

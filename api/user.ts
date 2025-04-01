@@ -1,5 +1,5 @@
 import { http } from "@/connections";
-import { ApiRes, IUser } from "@/types";
+import { ApiRes, Friend, IUser } from "@/types";
 
 export class UserApi {
 	public static async updateUser(
@@ -25,6 +25,12 @@ export class UserApi {
 		}>
 	> {
 		const response = await http.post("/users/search/bulk", { query });
+		return response.data;
+	}
+	public static async getUserFriends(
+		headers?: any
+	): Promise<ApiRes<Array<Friend>>> {
+		const response = await http.get("/users/friends", { headers });
 		return response.data;
 	}
 }

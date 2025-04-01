@@ -12,3 +12,7 @@ export type ExpensesSummary = {
 	paid: number;
 	received: number;
 };
+
+export type Friend = IUser & {
+	strings: number;
+};
