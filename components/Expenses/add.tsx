@@ -132,6 +132,10 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			Notify.error(error);
 		}
 	};
+	const handleClose = () => {
+		setCurrentScreen("default");
+		setOpenAddWizard(false);
+	};
 	const handleTypeSelect = (type: T_EXPENSE_TYPE) => {
 		setPayload((prev) => ({ ...prev, type }));
 		setOpenAddWizard(true);
@@ -141,7 +145,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 			{openAddWizard ? (
 				<Pane
 					title={`Add Expense - ${expenseTypes[payload.type].label}`}
-					onClose={() => setOpenAddWizard(false)}
+					onClose={handleClose}
 					direction="bottom"
 				>
 					<form onSubmit={handleSubmit} className={classes("-form")}>
@@ -185,23 +189,25 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 										onClick={() =>
 											setExpandAdditionInfo((p) => !p)
 										}
-										className={classes("-additional")}
 									>
-										<Typography size="lg">
-											Additional Information
-										</Typography>
-										<IconButton
-											icon={
-												<FiChevronUp
-													style={{
-														transform:
-															expandAdditionInfo
-																? "rotate(180deg)"
-																: "rotate(0deg)",
-													}}
-												/>
-											}
-										/>
+										<div className={classes("-additional")}>
+											<Typography size="lg">
+												Additional Information
+											</Typography>
+											<IconButton
+												type="button"
+												icon={
+													<FiChevronUp
+														style={{
+															transform:
+																expandAdditionInfo
+																	? "rotate(180deg)"
+																	: "rotate(0deg)",
+														}}
+													/>
+												}
+											/>
+										</div>
 									</div>
 									{expandAdditionInfo ? (
 										<>
@@ -578,7 +584,7 @@ export const AddExpenseWizard: React.FC<AddExpenseWizardProps> = () => {
 				icon={<MaterialIcon icon="add" />}
 				options={Object.values(expenseTypes).map((o) => ({
 					id: o.id,
-					icon: o.icon,
+					icon: <o.Icon size={24} />,
 					label: o.label,
 					onSelect: (id) => handleTypeSelect(id as T_EXPENSE_TYPE),
 				}))}

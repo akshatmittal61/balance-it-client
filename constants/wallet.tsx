@@ -1,4 +1,3 @@
-import { MaterialIcon } from "@/library";
 import {
 	ExpensesSummary,
 	T_COMPONENT_THEME,
@@ -6,6 +5,12 @@ import {
 	T_EXPENSE_TYPE,
 } from "@/types";
 import React from "react";
+import { IconBaseProps } from "react-icons";
+import {
+	TbArrowLeftFromArc,
+	TbArrowLeftToArc,
+	TbRestore,
+} from "react-icons/tb";
 import { frontendBaseUrl } from "./variables";
 
 export const expenseMethods: Record<
@@ -39,17 +44,20 @@ export const expenseTypes: Record<
 	{
 		id: T_EXPENSE_TYPE;
 		label: string;
-		icon: React.ReactNode;
+		Icon: React.FC<IconBaseProps>;
 		theme: T_COMPONENT_THEME;
 	}
 > = {
 	PAID: {
 		id: "PAID",
 		label: "Paid",
-		icon: (
-			<MaterialIcon
-				icon="upload"
-				style={{ color: "var(--material-red)" }}
+		Icon: (props?: IconBaseProps) => (
+			<TbArrowLeftFromArc
+				style={{
+					color: "var(--material-red)",
+					...(props?.style || {}),
+				}}
+				{...props}
 			/>
 		),
 		theme: "error",
@@ -57,10 +65,13 @@ export const expenseTypes: Record<
 	RECEIVED: {
 		id: "RECEIVED",
 		label: "Received",
-		icon: (
-			<MaterialIcon
-				icon="download"
-				style={{ color: "var(--material-green)" }}
+		Icon: (props?: IconBaseProps) => (
+			<TbArrowLeftToArc
+				style={{
+					color: "var(--material-green)",
+					...(props?.style || {}),
+				}}
+				{...props}
 			/>
 		),
 		theme: "success",
@@ -68,10 +79,13 @@ export const expenseTypes: Record<
 	SELF: {
 		id: "SELF",
 		label: "Self",
-		icon: (
-			<MaterialIcon
-				icon="laps"
-				style={{ color: "var(--material-blue)" }}
+		Icon: (props?: IconBaseProps) => (
+			<TbRestore
+				style={{
+					color: "var(--material-blue)",
+					...(props?.style || {}),
+				}}
+				{...props}
 			/>
 		),
 		theme: "info",

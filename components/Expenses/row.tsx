@@ -194,11 +194,16 @@ export const ExpenseRow: React.FC<ExpenseRowProps> = ({
 							</Typography>
 						) : null}
 						<div className={classes("-transfer")}>
-							<Pill
-								icon={expenseTypes[expense.type].icon}
-								label={expenseTypes[expense.type].label}
-								theme={expenseTypes[expense.type].theme}
-							/>
+							{(() => {
+								const type = expenseTypes[expense.type];
+								return (
+									<Pill
+										icon={<type.Icon />}
+										label={type.label}
+										theme={type.theme}
+									/>
+								);
+							})()}
 							<div className={classes("-actions")}>
 								{expense.author.id === loggedInUser?.id ? (
 									<button
