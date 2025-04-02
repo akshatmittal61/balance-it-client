@@ -56,17 +56,4 @@
 			display: none;
 		}
 	}
-
-	&-cta {
-		position: fixed;
-		bottom: 1.5rem;
-		right: 1.5rem;
-		width: 4rem;
-		height: 4rem;
-
-		& > * {
-			color: var(--white);
-			border-color: var(--white);
-		}
-	}
 }
